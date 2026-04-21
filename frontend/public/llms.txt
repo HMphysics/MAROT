@@ -1,0 +1,8 @@
+## Pages
+- [- Editor](/adminposteditor): No description available
+- [- MAROT Research](/blogpost): No description available
+- [- MAROT STRATEGIES](/investmentstrategies): No description available
+- [Admin Dashboard](/admindashboard): No description available
+- [Home - MAROT STRATEGIES](/home): Capture Trends. Power Decisions. Marot Strategies provides advanced quantitative investment models and market research to help you navigate global markets.
+- [Manage Strategies - Admin](/strategymanagement): No description available
+- [Restricted Access - MAROT STRATEGIES](/adminlogin): No description available

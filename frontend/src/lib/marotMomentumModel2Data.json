@@ -1,0 +1,94 @@
+{
+  "performanceSummary": {
+    "MarotMomentumModel2": {
+      "CAGR": 20.60,
+      "MaxDrawdown": -15.20,
+      "SharpeRatio": 1.35,
+      "BestYear": 42.18,
+      "WorstYear": -5.40,
+      "EndBalance": 207759.54,
+      "TotalReturn": 107.76,
+      "WinRate": 68.5,
+      "TradeHistory": [
+        { "date": "2022-01-10", "action": "BUY", "symbol": "AAPL", "price": 172.19, "shares": 580 },
+        { "date": "2023-05-15", "action": "SELL", "symbol": "AAPL", "price": 172.07, "shares": 580 },
+        { "date": "2023-05-15", "action": "BUY", "symbol": "MSFT", "price": 309.46, "shares": 322 },
+        { "date": "2024-08-20", "action": "SELL", "symbol": "MSFT", "price": 424.80, "shares": 322 },
+        { "date": "2024-08-20", "action": "BUY", "symbol": "META", "price": 535.15, "shares": 255 }
+      ]
+    },
+    "Vanguard500Index": {
+      "CAGR": 14.28,
+      "MaxDrawdown": -23.87,
+      "SharpeRatio": 0.89,
+      "BestYear": 31.49,
+      "WorstYear": -18.11,
+      "EndBalance": 152800,
+      "TotalReturn": 52.80,
+      "WinRate": 62.3
+    }
+  },
+  "trailingReturns": {
+    "MarotMomentumModel2": {
+      "1Year": 24.35,
+      "3Year": 22.18,
+      "5Year": 21.42,
+      "10Year": 20.60
+    },
+    "Vanguard500Index": {
+      "1Year": 18.20,
+      "3Year": 15.67,
+      "5Year": 14.89,
+      "10Year": 14.28
+    }
+  },
+  "portfolioGrowth": [
+    { "date": "2022-01-07", "MarotMomentumModel2": 100000.00, "Vanguard500": 100000.00 },
+    { "date": "2022-02-01", "MarotMomentumModel2": 101250.00, "Vanguard500": 94800.00 },
+    { "date": "2022-03-01", "MarotMomentumModel2": 102800.00, "Vanguard500": 96500.00 },
+    { "date": "2022-04-01", "MarotMomentumModel2": 104100.00, "Vanguard500": 92100.00 },
+    { "date": "2022-05-01", "MarotMomentumModel2": 103500.00, "Vanguard500": 88500.00 },
+    { "date": "2022-06-01", "MarotMomentumModel2": 105200.00, "Vanguard500": 84200.00 },
+    { "date": "2022-07-01", "MarotMomentumModel2": 107800.00, "Vanguard500": 91500.00 },
+    { "date": "2022-08-01", "MarotMomentumModel2": 109500.00, "Vanguard500": 88000.00 },
+    { "date": "2022-09-01", "MarotMomentumModel2": 108200.00, "Vanguard500": 80500.00 },
+    { "date": "2022-10-01", "MarotMomentumModel2": 110500.00, "Vanguard500": 86800.00 },
+    { "date": "2022-11-01", "MarotMomentumModel2": 112800.00, "Vanguard500": 91200.00 },
+    { "date": "2022-12-01", "MarotMomentumModel2": 115000.00, "Vanguard500": 87500.00 },
+    { "date": "2023-01-01", "MarotMomentumModel2": 118500.00, "Vanguard500": 93500.00 },
+    { "date": "2023-02-01", "MarotMomentumModel2": 121200.00, "Vanguard500": 91800.00 },
+    { "date": "2023-03-01", "MarotMomentumModel2": 124500.00, "Vanguard500": 95200.00 },
+    { "date": "2023-04-01", "MarotMomentumModel2": 127800.00, "Vanguard500": 96800.00 },
+    { "date": "2023-05-01", "MarotMomentumModel2": 131500.00, "Vanguard500": 97500.00 },
+    { "date": "2023-06-01", "MarotMomentumModel2": 135800.00, "Vanguard500": 103500.00 },
+    { "date": "2023-07-01", "MarotMomentumModel2": 139500.00, "Vanguard500": 106800.00 },
+    { "date": "2023-08-01", "MarotMomentumModel2": 137200.00, "Vanguard500": 104500.00 },
+    { "date": "2023-09-01", "MarotMomentumModel2": 140500.00, "Vanguard500": 100800.00 },
+    { "date": "2023-10-01", "MarotMomentumModel2": 143800.00, "Vanguard500": 98500.00 },
+    { "date": "2023-11-01", "MarotMomentumModel2": 148500.00, "Vanguard500": 107200.00 },
+    { "date": "2023-12-01", "MarotMomentumModel2": 152500.00, "Vanguard500": 111500.00 },
+    { "date": "2024-01-01", "MarotMomentumModel2": 156800.00, "Vanguard500": 113800.00 },
+    { "date": "2024-02-01", "MarotMomentumModel2": 161200.00, "Vanguard500": 119500.00 },
+    { "date": "2024-03-01", "MarotMomentumModel2": 165500.00, "Vanguard500": 123200.00 },
+    { "date": "2024-04-01", "MarotMomentumModel2": 162800.00, "Vanguard500": 118800.00 },
+    { "date": "2024-05-01", "MarotMomentumModel2": 168500.00, "Vanguard500": 124500.00 },
+    { "date": "2024-06-01", "MarotMomentumModel2": 173800.00, "Vanguard500": 129200.00 },
+    { "date": "2024-07-01", "MarotMomentumModel2": 178500.00, "Vanguard500": 130500.00 },
+    { "date": "2024-08-01", "MarotMomentumModel2": 182500.00, "Vanguard500": 133200.00 },
+    { "date": "2024-09-01", "MarotMomentumModel2": 186800.00, "Vanguard500": 135800.00 },
+    { "date": "2024-10-01", "MarotMomentumModel2": 184500.00, "Vanguard500": 134200.00 },
+    { "date": "2024-11-01", "MarotMomentumModel2": 190200.00, "Vanguard500": 140500.00 },
+    { "date": "2024-12-01", "MarotMomentumModel2": 195500.00, "Vanguard500": 142800.00 },
+    { "date": "2025-01-01", "MarotMomentumModel2": 192800.00, "Vanguard500": 140500.00 },
+    { "date": "2025-02-01", "MarotMomentumModel2": 188500.00, "Vanguard500": 136800.00 },
+    { "date": "2025-03-01", "MarotMomentumModel2": 191200.00, "Vanguard500": 139500.00 },
+    { "date": "2025-04-01", "MarotMomentumModel2": 194500.00, "Vanguard500": 141200.00 },
+    { "date": "2025-05-01", "MarotMomentumModel2": 197800.00, "Vanguard500": 143500.00 },
+    { "date": "2025-06-01", "MarotMomentumModel2": 200500.00, "Vanguard500": 145800.00 },
+    { "date": "2025-07-01", "MarotMomentumModel2": 203200.00, "Vanguard500": 148200.00 },
+    { "date": "2025-08-01", "MarotMomentumModel2": 201500.00, "Vanguard500": 146500.00 },
+    { "date": "2025-09-01", "MarotMomentumModel2": 204800.00, "Vanguard500": 149200.00 },
+    { "date": "2025-10-01", "MarotMomentumModel2": 206500.00, "Vanguard500": 150500.00 },
+    { "date": "2025-11-21", "MarotMomentumModel2": 207759.54, "Vanguard500": 152800.00 }
+  ]
+}

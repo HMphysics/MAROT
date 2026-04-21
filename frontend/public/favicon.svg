@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Dark background for browser tab visibility -->
+  <rect width="100" height="100" rx="20" fill="#0b0c10" />
+  
+  <!-- Clean Straight Geometric M (Distinct from Logo) -->
+  <path 
+    d="M25 75 V25 L50 60 L75 25 V75" 
+    stroke="#FFFFFF" 
+    stroke-width="10" 
+    stroke-linecap="square" 
+    stroke-linejoin="miter" 
+  />
+</svg>

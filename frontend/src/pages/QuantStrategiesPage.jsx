@@ -1,0 +1,323 @@
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Table2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+
+import Header from '@/components/Header';
+import { registry, getStrategies, getBenchmarks } from '@/data/registry';
+import { normalizeSeries } from '@/lib/seriesNormalizer';
+import { computeFullMetrics } from '@/lib/metricsCalculator';
+import EquityCurveChart from '@/components/quant/EquityCurveChart';
+import DrawdownChart from '@/components/quant/DrawdownChart';
+import RollingSharpeChart from '@/components/quant/RollingSharpeChart';
+import RiskReturnScatter from '@/components/quant/RiskReturnScatter';
+import MonthlyHistogram from '@/components/quant/MonthlyHistogram';
+import MetricsTable from '@/components/quant/MetricsTable';
+
+const DATE_PRESETS = [
+  { label: 'YTD', getValue: () => `${new Date().getFullYear()}-01-01` },
+  { label: '1Y', getValue: () => { const d = new Date(); d.setFullYear(d.getFullYear() - 1); return d.toISOString().split('T')[0]; } },
+  { label: '3Y', getValue: () => { const d = new Date(); d.setFullYear(d.getFullYear() - 3); return d.toISOString().split('T')[0]; } },
+  { label: '5Y', getValue: () => { const d = new Date(); d.setFullYear(d.getFullYear() - 5); return d.toISOString().split('T')[0]; } },
+  { label: 'MAX', getValue: () => null },
+];
+
+const QuantStrategiesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [computing, setComputing] = useState(true);
+
+  // Parse URL state
+  const initSelected = searchParams.get('s')?.split(',').filter(Boolean) || ['dual-momentum', 'sp500'];
+  const initBenchmark = searchParams.get('b') || 'sp500';
+  const initLog = searchParams.get('log') === '1';
+  const initRebased = searchParams.get('r') !== '0';
+  const initPreset = searchParams.get('p') || 'MAX';
+
+  const [selectedItems, setSelectedItems] = useState(initSelected);
+  const [primaryBenchmark, setPrimaryBenchmark] = useState(initBenchmark);
+  const [isLog, setIsLog] = useState(initLog);
+  const [isRebased, setIsRebased] = useState(initRebased);
+  const [activePreset, setActivePreset] = useState(initPreset);
+
+  const dateRange = useMemo(() => {
+    const preset = DATE_PRESETS.find((p) => p.label === activePreset);
+    const start = preset ? preset.getValue() : null;
+    return { start, end: null };
+  }, [activePreset]);
+
+  // Sync state to URL
+  const syncURL = useCallback(() => {
+    const params = new URLSearchParams();
+    if (selectedItems.length) params.set('s', selectedItems.join(','));
+    if (primaryBenchmark) params.set('b', primaryBenchmark);
+    if (isLog) params.set('log', '1');
+    if (!isRebased) params.set('r', '0');
+    if (activePreset !== 'MAX') params.set('p', activePreset);
+    setSearchParams(params, { replace: true });
+  }, [selectedItems, primaryBenchmark, isLog, isRebased, activePreset, setSearchParams]);
+
+  useEffect(() => {
+    syncURL();
+  }, [syncURL]);
+
+  // Normalize all data once
+  const normalizedData = useMemo(() => {
+    const result = {};
+    registry.forEach((item) => {
+      try {
+        result[item.id] = normalizeSeries(item.data);
+      } catch {
+        result[item.id] = [];
+      }
+    });
+    return result;
+  }, []);
+
+  // Compute metrics
+  const metricsMap = useMemo(() => {
+    setComputing(true);
+    const benchData = normalizedData[primaryBenchmark] || null;
+    const result = {};
+    selectedItems.forEach((id) => {
+      const data = normalizedData[id];
+      if (!data || data.length < 2) return;
+
+      let filtered = data;
+      if (dateRange.start) filtered = filtered.filter((d) => d.date >= dateRange.start);
+      if (dateRange.end) filtered = filtered.filter((d) => d.date <= dateRange.end);
+
+      let benchFiltered = benchData;
+      if (benchData && dateRange.start) {
+        benchFiltered = benchData.filter((d) => d.date >= dateRange.start);
+      }
+
+      result[id] = computeFullMetrics(filtered, id === primaryBenchmark ? null : benchFiltered);
+    });
+    setComputing(false);
+    return result;
+  }, [selectedItems, normalizedData, primaryBenchmark, dateRange]);
+
+  const toggleItem = (id) => {
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const strategies = getStrategies();
+  const benchmarksList = getBenchmarks();
+
+  return (
+    <>
+      <Helmet>
+        <title>Quant Strategies - MAROT STRATEGIES</title>
+        <meta name="description" content="Compare quantitative strategies against benchmarks with advanced metrics and visualizations." />
+      </Helmet>
+
+      <div className="bg-[#0b0c10] min-h-screen text-white font-sans" data-testid="quant-strategies-page">
+        <Header />
+
+        <main className="pt-28 pb-20 px-4 md:px-8">
+          <div className="max-w-[1440px] mx-auto">
+            {/* Title */}
+            <h1 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight" data-testid="page-title">
+              Quant Strategies
+            </h1>
+
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Left Panel - Controls */}
+              <aside className="lg:w-72 flex-shrink-0 space-y-6" data-testid="controls-panel">
+                {/* Strategy Checkboxes */}
+                <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                  <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-3">Strategies</h3>
+                  <div className="space-y-2.5">
+                    {strategies.map((s) => (
+                      <label key={s.id} className="flex items-center gap-2.5 cursor-pointer group" data-testid={`strategy-checkbox-${s.id}`}>
+                        <Checkbox
+                          checked={selectedItems.includes(s.id)}
+                          onCheckedChange={() => toggleItem(s.id)}
+                          className="border-gray-600 data-[state=checked]:border-transparent"
+                          style={{ '--tw-ring-color': s.color, backgroundColor: selectedItems.includes(s.id) ? s.color : undefined }}
+                        />
+                        <span className="flex items-center gap-2 text-sm text-gray-300 group-hover:text-white transition-colors">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: s.color }} />
+                          {s.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Benchmark Checkboxes */}
+                <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                  <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-3">Benchmarks</h3>
+                  <div className="space-y-2.5">
+                    {benchmarksList.map((b) => (
+                      <label key={b.id} className="flex items-center gap-2.5 cursor-pointer group" data-testid={`benchmark-checkbox-${b.id}`}>
+                        <Checkbox
+                          checked={selectedItems.includes(b.id)}
+                          onCheckedChange={() => toggleItem(b.id)}
+                          className="border-gray-600 data-[state=checked]:border-transparent"
+                          style={{ backgroundColor: selectedItems.includes(b.id) ? b.color : undefined }}
+                        />
+                        <span className="flex items-center gap-2 text-sm text-gray-300 group-hover:text-white transition-colors">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: b.color }} />
+                          {b.name}
+                        </span>
+                      </label>
+                    ))}
+                </div>
+                </div>
+
+                {/* Date Range */}
+                <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                  <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-3">Date Range</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DATE_PRESETS.map((preset) => (
+                      <button
+                        key={preset.label}
+                        onClick={() => setActivePreset(preset.label)}
+                        className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${
+                          activePreset === preset.label
+                            ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
+                            : 'bg-gray-800/50 text-gray-400 border border-gray-700 hover:text-white hover:border-gray-600'
+                        }`}
+                        data-testid={`preset-${preset.label}`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Toggles */}
+                <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-400">Log Scale</Label>
+                    <Switch checked={isLog} onCheckedChange={setIsLog} data-testid="log-toggle" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-400">Rebased to 100</Label>
+                    <Switch checked={isRebased} onCheckedChange={setIsRebased} data-testid="rebase-toggle" />
+                  </div>
+                </div>
+
+                {/* Primary Benchmark */}
+                <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-4">
+                  <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-3">
+                    Primary Benchmark
+                  </h3>
+                  <p className="text-[10px] text-gray-500 mb-2">For Beta, Alpha, IR calculations</p>
+                  <RadioGroup value={primaryBenchmark} onValueChange={setPrimaryBenchmark}>
+                    {benchmarksList.map((b) => (
+                      <div key={b.id} className="flex items-center gap-2" data-testid={`primary-benchmark-${b.id}`}>
+                        <RadioGroupItem value={b.id} id={`pb-${b.id}`} className="border-gray-600" />
+                        <Label htmlFor={`pb-${b.id}`} className="text-sm text-gray-300 cursor-pointer">{b.name}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              </aside>
+
+              {/* Main Content */}
+              <div className="flex-1 min-w-0">
+                {computing ? (
+                  <div className="space-y-6">
+                    <Skeleton className="h-[450px] bg-gray-800/30 rounded-lg" />
+                    <Skeleton className="h-[350px] bg-gray-800/30 rounded-lg" />
+                  </div>
+                ) : (
+                  <Tabs defaultValue="equity" className="space-y-6">
+                    <TabsList className="bg-gray-900/60 border border-gray-800 p-1 h-auto flex flex-wrap gap-1" data-testid="chart-tabs">
+                      <TabsTrigger value="equity" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <LineChart className="w-3.5 h-3.5" /> Equity Curve
+                      </TabsTrigger>
+                      <TabsTrigger value="drawdown" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <TrendingDown className="w-3.5 h-3.5" /> Drawdown
+                      </TabsTrigger>
+                      <TabsTrigger value="sharpe" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <BarChart3 className="w-3.5 h-3.5" /> Rolling Sharpe
+                      </TabsTrigger>
+                      <TabsTrigger value="scatter" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <ScatterIcon className="w-3.5 h-3.5" /> Risk/Return
+                      </TabsTrigger>
+                      <TabsTrigger value="histogram" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <BarChart className="w-3.5 h-3.5" /> Histogram
+                      </TabsTrigger>
+                      <TabsTrigger value="table" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-400 text-xs gap-1.5 px-3 py-1.5">
+                        <Table2 className="w-3.5 h-3.5" /> Metrics Table
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <div className="bg-gray-900/30 border border-gray-800/50 rounded-xl p-4 md:p-6">
+                      <TabsContent value="equity" className="mt-0">
+                        <EquityCurveChart
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          normalizedData={normalizedData}
+                          isLog={isLog}
+                          isRebased={isRebased}
+                          dateRange={dateRange}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="drawdown" className="mt-0">
+                        <DrawdownChart
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          normalizedData={normalizedData}
+                          dateRange={dateRange}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="sharpe" className="mt-0">
+                        <RollingSharpeChart
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          normalizedData={normalizedData}
+                          dateRange={dateRange}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="scatter" className="mt-0">
+                        <RiskReturnScatter
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          metricsMap={metricsMap}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="histogram" className="mt-0">
+                        <MonthlyHistogram
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          normalizedData={normalizedData}
+                          dateRange={dateRange}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="table" className="mt-0">
+                        <MetricsTable
+                          selectedItems={selectedItems}
+                          registry={registry}
+                          metricsMap={metricsMap}
+                        />
+                      </TabsContent>
+                    </div>
+                  </Tabs>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </>
+  );
+};
+
+export default QuantStrategiesPage;
