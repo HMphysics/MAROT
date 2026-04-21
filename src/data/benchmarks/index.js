@@ -1,4 +1,7 @@
-import sp500 from './sp500.json';
-import nasdaq from './nasdaq.json';
+import spy from './spy.json';
+import qqq from './qqq.json';
+import gld from './gld.json';
+import spyGld5050 from './spy-gld-50-50.json';
+import portfolio6040 from './portfolio-60-40.json';
 
-export { sp500, nasdaq };
+export { spy, qqq, gld, spyGld5050, portfolio6040 };

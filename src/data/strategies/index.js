@@ -1,4 +1,5 @@
-import dualMomentum from './dual-momentum.json';
-import marotMomentumV2 from './marot-momentum-v2.json';
+import aresQqq from './ares-qqq.json';
+import combinada from './combinada.json';
+import bes from './bes.json';
 
-export { dualMomentum, marotMomentumV2 };
+export { aresQqq, combinada, bes };

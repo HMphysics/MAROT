@@ -33,8 +33,8 @@ const QuantStrategiesPage = () => {
   const [computing, setComputing] = useState(true);
 
   // Parse URL state
-  const initSelected = searchParams.get('s')?.split(',').filter(Boolean) || ['dual-momentum', 'sp500'];
-  const initBenchmark = searchParams.get('b') || 'sp500';
+  const initSelected = searchParams.get('s')?.split(',').filter(Boolean) || ['ares-qqq', 'combinada', 'spy'];
+  const initBenchmark = searchParams.get('b') || 'spy';
   const initLog = searchParams.get('log') === '1';
   const initRebased = searchParams.get('r') !== '0';
   const initPreset = searchParams.get('p') || 'MAX';
