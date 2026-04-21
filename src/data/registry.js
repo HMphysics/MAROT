@@ -1,4 +1,4 @@
-import { aresQqq, combinada, bes } from './strategies';
+import { aresQqq, combinada, bes, deimos, fobos, janus, tyr } from './strategies';
 import { spy, qqq, gld, spyGld5050, portfolio6040 } from './benchmarks';
 
 export const strategies = [
@@ -40,6 +40,58 @@ export const strategies = [
     is_public: true,
     order: 3,
     data: bes,
+  },
+  {
+    id: 'deimos',
+    name: 'Deimos',
+    slug: 'deimos',
+    type: 'strategy',
+    category: 'momentum',
+    color: '#EF4444',
+    description: 'Estrategia Deimos — Ares con rotación a Oro.',
+    inception_date: '2010-02-11',
+    is_public: true,
+    order: 4,
+    data: deimos,
+  },
+  {
+    id: 'fobos',
+    name: 'Fobos',
+    slug: 'fobos',
+    type: 'strategy',
+    category: 'factor',
+    color: '#22D3EE',
+    description: 'Estrategia Fobos — Beta/R² (VIX) + Amplitud NYSE con TQQQ.',
+    inception_date: '2010-02-12',
+    is_public: true,
+    order: 5,
+    data: fobos,
+  },
+  {
+    id: 'janus',
+    name: 'Janus',
+    slug: 'janus',
+    type: 'strategy',
+    category: 'long-short',
+    color: '#10B981',
+    description: 'Estrategia Janus — Long-Short Momentum (RASI/ADn).',
+    inception_date: '2008-02-29',
+    is_public: true,
+    order: 6,
+    data: janus,
+  },
+  {
+    id: 'tyr',
+    name: 'Tyr',
+    slug: 'tyr',
+    type: 'strategy',
+    category: 'momentum',
+    color: '#EC4899',
+    description: 'Estrategia TYR.',
+    inception_date: '2006-02-28',
+    is_public: true,
+    order: 7,
+    data: tyr,
   },
 ];
 
