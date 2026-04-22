@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart } from 'lucide-react';
+import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Calculator } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,7 @@ import RollingSharpeChart from '@/components/quant/RollingSharpeChart';
 import RiskReturnScatter from '@/components/quant/RiskReturnScatter';
 import MonthlyHistogram from '@/components/quant/MonthlyHistogram';
 import MetricsTable from '@/components/quant/MetricsTable';
+import InvestmentCalculator from '@/components/quant/InvestmentCalculator';
 
 const DATE_PRESETS = [
   { label: 'YTD', getValue: () => `${new Date().getFullYear()}-01-01` },
@@ -249,6 +250,9 @@ const QuantStrategiesPage = () => {
                       <TabsTrigger value="histogram" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
                         <BarChart className="w-3.5 h-3.5" /> Histogram
                       </TabsTrigger>
+                      <TabsTrigger value="calculator" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
+                        <Calculator className="w-3.5 h-3.5" /> Calculator
+                      </TabsTrigger>
                     </TabsList>
 
                     <div className="bg-[#111113] border border-zinc-800 rounded-xl p-4 md:p-6">
@@ -266,6 +270,9 @@ const QuantStrategiesPage = () => {
                       </TabsContent>
                       <TabsContent value="histogram" className="mt-0">
                         <MonthlyHistogram selectedItems={selectedItems} registry={registry} normalizedData={normalizedData} dateRange={dateRange} />
+                      </TabsContent>
+                      <TabsContent value="calculator" className="mt-0">
+                        <InvestmentCalculator pageSelectedItems={selectedItems} normalizedData={normalizedData} />
                       </TabsContent>
                     </div>
                   </Tabs>
