@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Table2, TrendingUp, Calendar, Trophy, AlertTriangle } from 'lucide-react';
+import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -27,97 +27,6 @@ const DATE_PRESETS = [
   { label: '5Y', getValue: () => { const d = new Date(); d.setFullYear(d.getFullYear() - 5); return d.toISOString().split('T')[0]; } },
   { label: 'MAX', getValue: () => null },
 ];
-
-// Quick Stats component
-const QuickStats = ({ selectedItems, registry, normalizedData, metricsMap, dateRange }) => {
-  const stats = useMemo(() => {
-    if (!selectedItems.length) return null;
-
-    const stratCount = selectedItems.filter((id) => registry.find((r) => r.id === id)?.type === 'strategy').length;
-    const benchCount = selectedItems.length - stratCount;
-
-    // Effective date range: latest start → earliest end across selected
-    let latestStart = null;
-    let earliestEnd = null;
-    selectedItems.forEach((id) => {
-      const data = normalizedData[id];
-      if (!data || data.length === 0) return;
-      let filtered = data;
-      if (dateRange.start) filtered = filtered.filter((d) => d.date >= dateRange.start);
-      if (filtered.length === 0) return;
-      const first = filtered[0].date;
-      const last = filtered[filtered.length - 1].date;
-      if (!latestStart || first > latestStart) latestStart = first;
-      if (!earliestEnd || last < earliestEnd) earliestEnd = last;
-    });
-
-    const years = latestStart && earliestEnd
-      ? ((new Date(earliestEnd) - new Date(latestStart)) / (365.25 * 86400000)).toFixed(1)
-      : '0';
-
-    // Best / worst / max DD from metrics
-    let bestName = '-', bestReturn = -Infinity;
-    let worstName = '-', worstReturn = Infinity;
-    let maxDDName = '-', maxDD = 0;
-
-    selectedItems.forEach((id) => {
-      const m = metricsMap[id];
-      const item = registry.find((r) => r.id === id);
-      if (!m || !item) return;
-      if (m.totalReturn > bestReturn) { bestReturn = m.totalReturn; bestName = item.name; }
-      if (m.totalReturn < worstReturn) { worstReturn = m.totalReturn; worstName = item.name; }
-      if (Math.abs(m.maxDD) > Math.abs(maxDD)) { maxDD = m.maxDD; maxDDName = item.name; }
-    });
-
-    const fmtPct = (v) => (v !== Infinity && v !== -Infinity && isFinite(v)) ? `${(v * 100).toFixed(1)}%` : '-';
-
-    return { stratCount, benchCount, latestStart, earliestEnd, years, bestName, bestReturn: fmtPct(bestReturn), worstName, worstReturn: fmtPct(worstReturn), maxDDName, maxDD: fmtPct(maxDD) };
-  }, [selectedItems, registry, normalizedData, metricsMap, dateRange]);
-
-  if (!stats) return null;
-
-  return (
-    <div className="bg-[#141416] border border-zinc-800 rounded-lg p-4 space-y-3" data-testid="quick-stats">
-      <h3 className="text-xs uppercase tracking-wider text-zinc-500 font-semibold">Quick Stats</h3>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-zinc-600">Strategies</p>
-          <p className="text-lg font-bold text-white">{stats.stratCount}</p>
-        </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-zinc-600">Benchmarks</p>
-          <p className="text-lg font-bold text-white">{stats.benchCount}</p>
-        </div>
-      </div>
-
-      <div className="border-t border-zinc-800 pt-3">
-        <p className="text-[10px] uppercase tracking-wider text-zinc-600 flex items-center gap-1"><Calendar className="w-3 h-3" /> Effective Range</p>
-        <p className="text-sm font-mono text-zinc-300 mt-0.5">{stats.latestStart || '-'}</p>
-        <p className="text-sm font-mono text-zinc-300">{stats.earliestEnd || '-'}</p>
-        <p className="text-xs text-zinc-500 mt-0.5">{stats.years} years</p>
-      </div>
-
-      <div className="border-t border-zinc-800 pt-3">
-        <p className="text-[10px] uppercase tracking-wider text-zinc-600 flex items-center gap-1"><Trophy className="w-3 h-3" /> Best Performer</p>
-        <p className="text-sm font-medium text-emerald-400">{stats.bestName}</p>
-        <p className="text-xs text-zinc-400">{stats.bestReturn}</p>
-      </div>
-
-      <div className="border-t border-zinc-800 pt-3">
-        <p className="text-[10px] uppercase tracking-wider text-zinc-600 flex items-center gap-1"><TrendingDown className="w-3 h-3" /> Worst Performer</p>
-        <p className="text-sm font-medium text-red-400">{stats.worstName}</p>
-        <p className="text-xs text-zinc-400">{stats.worstReturn}</p>
-      </div>
-
-      <div className="border-t border-zinc-800 pt-3">
-        <p className="text-[10px] uppercase tracking-wider text-zinc-600 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Deepest Drawdown</p>
-        <p className="text-sm font-medium text-orange-400">{stats.maxDDName}</p>
-        <p className="text-xs text-zinc-400">{stats.maxDD}</p>
-      </div>
-    </div>
-  );
-};
 
 const QuantStrategiesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -306,15 +215,6 @@ const QuantStrategiesPage = () => {
                     ))}
                   </RadioGroup>
                 </div>
-
-                {/* Quick Stats */}
-                <QuickStats
-                  selectedItems={selectedItems}
-                  registry={registry}
-                  normalizedData={normalizedData}
-                  metricsMap={metricsMap}
-                  dateRange={dateRange}
-                />
               </aside>
 
               {/* Main Content */}
@@ -342,9 +242,6 @@ const QuantStrategiesPage = () => {
                       <TabsTrigger value="histogram" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
                         <BarChart className="w-3.5 h-3.5" /> Histogram
                       </TabsTrigger>
-                      <TabsTrigger value="table" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
-                        <Table2 className="w-3.5 h-3.5" /> Metrics Table
-                      </TabsTrigger>
                     </TabsList>
 
                     <div className="bg-[#111113] border border-zinc-800 rounded-xl p-4 md:p-6">
@@ -363,11 +260,15 @@ const QuantStrategiesPage = () => {
                       <TabsContent value="histogram" className="mt-0">
                         <MonthlyHistogram selectedItems={selectedItems} registry={registry} normalizedData={normalizedData} dateRange={dateRange} />
                       </TabsContent>
-                      <TabsContent value="table" className="mt-0">
-                        <MetricsTable selectedItems={selectedItems} registry={registry} metricsMap={metricsMap} />
-                      </TabsContent>
                     </div>
                   </Tabs>
+                )}
+
+                {/* Metrics Table — always visible below charts */}
+                {!computing && selectedItems.length > 0 && (
+                  <div className="mt-8 bg-[#111113] border border-zinc-800 rounded-xl p-4 md:p-6">
+                    <MetricsTable selectedItems={selectedItems} registry={registry} metricsMap={metricsMap} />
+                  </div>
                 )}
               </div>
             </div>
