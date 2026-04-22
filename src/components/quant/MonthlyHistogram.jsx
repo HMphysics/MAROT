@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { calculateMonthlyReturns } from '@/lib/metricsCalculator';
+import { watermark } from '@/lib/chartTheme';
 
 const MonthlyHistogram = ({ selectedItems, registry, normalizedData, dateRange }) => {
   const option = useMemo(() => {
@@ -48,6 +49,7 @@ const MonthlyHistogram = ({ selectedItems, registry, normalizedData, dateRange }
 
     return {
       backgroundColor: 'transparent',
+      graphic: [watermark],
       tooltip: {
         trigger: 'axis',
         backgroundColor: 'rgba(17, 17, 19, 0.96)',

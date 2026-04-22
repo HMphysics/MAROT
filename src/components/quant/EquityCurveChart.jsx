@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { buildUnifiedAxis } from '@/lib/chartUtils';
-
-const GRID_COLOR = '#27272A';
-const AXIS_LABEL_COLOR = '#71717A';
-const TOOLTIP_BG = 'rgba(17, 17, 19, 0.96)';
-const TOOLTIP_BORDER = '#27272A';
+import { GRID_COLOR, AXIS_LABEL_COLOR, TOOLTIP_BG, TOOLTIP_BORDER, watermark } from '@/lib/chartTheme';
 
 const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRebased, dateRange }) => {
   const option = useMemo(() => {
@@ -84,6 +80,7 @@ const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRe
 
     return {
       backgroundColor: 'transparent',
+      graphic: [watermark],
       title: titleSubtext ? {
         text: titleSubtext,
         left: 60, top: 8,

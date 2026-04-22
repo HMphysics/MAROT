@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { watermark } from '@/lib/chartTheme';
 
 const RiskReturnScatter = ({ selectedItems, registry, metricsMap }) => {
   const option = useMemo(() => {
@@ -22,6 +23,7 @@ const RiskReturnScatter = ({ selectedItems, registry, metricsMap }) => {
 
     return {
       backgroundColor: 'transparent',
+      graphic: [watermark],
       tooltip: {
         formatter: (p) =>
           `<div style="font-weight:600;color:#fff">${p.name}</div>

@@ -2,11 +2,7 @@ import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { calculateDrawdownSeries } from '@/lib/metricsCalculator';
 import { buildUnifiedAxis } from '@/lib/chartUtils';
-
-const GRID_COLOR = '#27272A';
-const AXIS_LABEL_COLOR = '#71717A';
-const TOOLTIP_BG = 'rgba(17, 17, 19, 0.96)';
-const TOOLTIP_BORDER = '#27272A';
+import { GRID_COLOR, AXIS_LABEL_COLOR, TOOLTIP_BG, TOOLTIP_BORDER, watermark } from '@/lib/chartTheme';
 
 const DrawdownChart = ({ selectedItems, registry, normalizedData, dateRange }) => {
   const option = useMemo(() => {
@@ -62,6 +58,7 @@ const DrawdownChart = ({ selectedItems, registry, normalizedData, dateRange }) =
 
     return {
       backgroundColor: 'transparent',
+      graphic: [watermark],
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'line', snap: true, lineStyle: { color: '#3F3F46' } },
