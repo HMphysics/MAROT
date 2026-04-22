@@ -11,43 +11,65 @@ const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRe
   const option = useMemo(() => {
     if (!selectedItems.length) return null;
 
-    // 1. Gather & filter series data per selection
-    const seriesDataMap = {};
+    // 1. Filter each series by dateRange
+    const rawFiltered = {};
     selectedItems.forEach((id) => {
       const data = normalizedData[id];
       if (!data || data.length === 0) return;
       let filtered = data;
       if (dateRange.start) filtered = filtered.filter((d) => d.date >= dateRange.start);
       if (dateRange.end) filtered = filtered.filter((d) => d.date <= dateRange.end);
-      if (filtered.length === 0) return;
-
-      if (isRebased) {
-        const baseVal = filtered[0].value;
-        if (baseVal === 0) return;
-        seriesDataMap[id] = filtered.map((d) => ({ date: d.date, value: (d.value / baseVal) * 100 }));
-      } else {
-        seriesDataMap[id] = filtered;
-      }
+      if (filtered.length > 0) rawFiltered[id] = filtered;
     });
 
-    if (Object.keys(seriesDataMap).length === 0) return null;
+    if (Object.keys(rawFiltered).length === 0) return null;
 
-    // 2. Build unified X-axis with forward-fill
-    const { dates, filled } = buildUnifiedAxis(seriesDataMap);
+    // 2. Determine common rebase date (latest first-date across selected)
+    let commonStart = null;
+    for (const data of Object.values(rawFiltered)) {
+      const first = data[0].date;
+      if (!commonStart || first > commonStart) commonStart = first;
+    }
 
-    // 3. Build ECharts series
+    // 3. Transform values based on mode
+    const transformed = {};
+    for (const [id, data] of Object.entries(rawFiltered)) {
+      let baseVal;
+      if (isRebased) {
+        const bp = data.find((p) => p.date >= commonStart);
+        baseVal = bp ? bp.value : data[0].value;
+        if (!baseVal || baseVal === 0) baseVal = 1;
+        transformed[id] = data.map((d) => ({ date: d.date, value: (d.value / baseVal) * 100 }));
+      } else {
+        baseVal = data[0].value;
+        if (!baseVal || baseVal === 0) baseVal = 1;
+        transformed[id] = data.map((d) => ({ date: d.date, value: ((d.value / baseVal) - 1) * 100 }));
+      }
+    }
+
+    // 4. Build unified axis with forward-fill (stops at each series' last date)
+    const { dates, filled } = buildUnifiedAxis(transformed);
+
+    // 5. Build ECharts series — use [dateString, value] pairs on time axis
+    //    so lines end naturally when data ends (null → no point drawn)
     const echartsSeries = [];
     selectedItems.forEach((id) => {
       const item = registry.find((r) => r.id === id);
       if (!item || !filled[id]) return;
+
+      const seriesData = [];
+      for (let i = 0; i < dates.length; i++) {
+        const v = filled[id][i];
+        if (v !== null) seriesData.push([dates[i], +v.toFixed(4)]);
+      }
+      if (seriesData.length === 0) return;
+
       echartsSeries.push({
         name: item.name,
         type: 'line',
         smooth: false,
         symbol: 'none',
-        sampling: 'lttb',
-        connectNulls: true,
-        data: filled[id],
+        data: seriesData,
         lineStyle: { color: item.color, width: item.type === 'strategy' ? 2.5 : 1.8 },
         itemStyle: { color: item.color },
         z: item.type === 'strategy' ? 10 : 1,
@@ -56,22 +78,33 @@ const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRe
 
     if (echartsSeries.length === 0) return null;
 
+    const yAxisName = isRebased ? 'Valor (base 100)' : 'Retorno acumulado (%)';
+    const yFormatter = isRebased ? (v) => v.toFixed(0) : (v) => `${v.toFixed(0)}%`;
+    const titleSubtext = isRebased && commonStart ? `Base: ${commonStart}` : '';
+
     return {
       backgroundColor: 'transparent',
+      title: titleSubtext ? {
+        text: titleSubtext,
+        left: 60, top: 8,
+        textStyle: { color: '#52525B', fontSize: 11, fontWeight: 'normal', fontFamily: 'monospace' },
+      } : undefined,
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'cross', lineStyle: { color: '#3F3F46' }, crossStyle: { color: '#3F3F46' } },
+        axisPointer: { type: 'line', snap: true, lineStyle: { color: '#3F3F46' } },
         backgroundColor: TOOLTIP_BG,
         borderColor: TOOLTIP_BORDER,
         textStyle: { color: '#E4E4E7', fontSize: 13 },
         formatter: (params) => {
           if (!params.length) return '';
-          const sorted = [...params].filter((p) => p.value != null).sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
-          let res = `<div style="font-weight:600;color:#A1A1AA;margin-bottom:8px">${params[0].axisValue}</div>`;
+          const valid = params.filter((p) => p.value && p.value[1] != null);
+          if (valid.length === 0) return '';
+          const sorted = [...valid].sort((a, b) => (b.value[1] ?? 0) - (a.value[1] ?? 0));
+          const dateStr = sorted[0].value[0];
+          let res = `<div style="font-weight:600;color:#A1A1AA;margin-bottom:8px">${dateStr}</div>`;
           sorted.forEach((p) => {
-            const val = isRebased
-              ? `${(p.value - 100).toFixed(2)}%`
-              : p.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+            const v = p.value[1];
+            const val = isRebased ? v.toFixed(2) : `${v.toFixed(2)}%`;
             res += `<div style="display:flex;justify-content:space-between;gap:20px;margin-top:4px">
               <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${p.color};display:inline-block"></span>${p.seriesName}</span>
               <span style="font-weight:bold;font-family:monospace">${val}</span>
@@ -82,45 +115,33 @@ const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRe
       },
       legend: {
         data: echartsSeries.map((s) => s.name),
-        textStyle: { color: '#A1A1AA', fontSize: 12 },
-        top: 0,
-        type: 'scroll',
+        textStyle: { color: '#A1A1AA', fontSize: 12 }, top: 0, type: 'scroll',
       },
-      grid: { top: 40, right: 20, bottom: 60, left: 60, containLabel: true },
+      grid: { top: titleSubtext ? 50 : 40, right: 20, bottom: 60, left: 60, containLabel: true },
       xAxis: {
-        type: 'category',
-        data: dates,
+        type: 'time',
         axisLine: { lineStyle: { color: GRID_COLOR } },
         axisLabel: { color: AXIS_LABEL_COLOR, fontSize: 11 },
+        splitLine: { show: false },
       },
       yAxis: {
         type: isLog ? 'log' : 'value',
-        min: isLog ? 'dataMin' : undefined,
-        scale: true,
+        name: yAxisName, nameLocation: 'middle', nameGap: 50,
+        nameTextStyle: { color: '#52525B', fontSize: 11 },
+        min: isLog ? 'dataMin' : undefined, scale: true,
         axisLine: { show: false },
-        axisLabel: {
-          color: AXIS_LABEL_COLOR,
-          fontSize: 11,
-          formatter: isRebased ? (v) => `${(v - 100).toFixed(0)}%` : (v) => v.toLocaleString(),
-        },
+        axisLabel: { color: AXIS_LABEL_COLOR, fontSize: 11, formatter: yFormatter },
         splitLine: { lineStyle: { color: GRID_COLOR, type: 'dashed' } },
       },
       dataZoom: [
         { type: 'inside', start: 0, end: 100 },
-        {
-          type: 'slider',
-          backgroundColor: 'transparent',
-          borderColor: '#27272A',
+        { type: 'slider', backgroundColor: 'transparent', borderColor: '#27272A',
           fillerColor: 'rgba(255,255,255,0.04)',
           handleStyle: { color: '#71717A', borderColor: '#52525B' },
-          textStyle: { color: '#71717A' },
-          bottom: 8,
-          height: 24,
-        },
+          textStyle: { color: '#71717A' }, bottom: 8, height: 24 },
       ],
       toolbox: {
-        right: 10,
-        top: -5,
+        right: 10, top: -5,
         feature: { saveAsImage: { title: 'Export PNG', pixelRatio: 2, backgroundColor: '#111113' } },
         iconStyle: { borderColor: '#52525B' },
       },

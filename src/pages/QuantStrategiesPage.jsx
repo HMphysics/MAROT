@@ -195,9 +195,16 @@ const QuantStrategiesPage = () => {
                     <Label className="text-sm text-zinc-400">Log Scale</Label>
                     <Switch checked={isLog} onCheckedChange={setIsLog} data-testid="log-toggle" />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm text-zinc-400">Rebased to 100</Label>
-                    <Switch checked={isRebased} onCheckedChange={setIsRebased} data-testid="rebase-toggle" />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm text-zinc-400">Rebased to 100</Label>
+                      <Switch checked={isRebased} onCheckedChange={setIsRebased} data-testid="rebase-toggle" />
+                    </div>
+                    <p className="text-[10px] text-zinc-600 mt-1.5 leading-relaxed">
+                      {isRebased
+                        ? 'Todas las series parten de 100 en la fecha de inicio común, para comparar crecimiento relativo.'
+                        : 'Muestra retorno acumulado (%) desde el inicio de cada serie.'}
+                    </p>
                   </div>
                 </div>
 
