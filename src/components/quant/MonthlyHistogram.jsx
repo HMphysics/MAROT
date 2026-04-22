@@ -50,13 +50,13 @@ const MonthlyHistogram = ({ selectedItems, registry, normalizedData, dateRange }
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
-        backgroundColor: 'rgba(11, 12, 16, 0.95)',
-        borderColor: '#333',
-        textStyle: { color: '#e5e7eb' },
+        backgroundColor: 'rgba(17, 17, 19, 0.96)',
+        borderColor: '#27272A',
+        textStyle: { color: '#E4E4E7' },
         formatter: (params) => {
           if (!params.length) return '';
           const bin = params[0].value[0];
-          let res = `<div style="font-weight:600;color:#9ca3af;margin-bottom:6px">${bin}% to ${bin + 2}%</div>`;
+          let res = `<div style="font-weight:600;color:#A1A1AA;margin-bottom:6px">${bin}% to ${bin + 2}%</div>`;
           params.forEach((p) => {
             res += `<div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px">
               <span style="color:${p.color}">${p.seriesName}</span>
@@ -68,32 +68,32 @@ const MonthlyHistogram = ({ selectedItems, registry, normalizedData, dateRange }
       },
       legend: {
         data: series.map((s) => s.name),
-        textStyle: { color: '#9ca3af', fontSize: 12 },
+        textStyle: { color: '#A1A1AA', fontSize: 12 },
         top: 0,
         type: 'scroll',
       },
       grid: { top: 40, right: 20, bottom: 40, left: 60, containLabel: true },
       xAxis: {
         type: 'category',
-        axisLine: { lineStyle: { color: '#333' } },
-        axisLabel: { color: '#6b7280', formatter: '{value}%' },
+        axisLine: { lineStyle: { color: '#27272A' } },
+        axisLabel: { color: '#71717A', formatter: '{value}%' },
         name: 'Monthly Return (%)',
         nameLocation: 'middle',
         nameGap: 30,
-        nameTextStyle: { color: '#6b7280', fontSize: 12 },
+        nameTextStyle: { color: '#71717A', fontSize: 12 },
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: '#6b7280' },
-        splitLine: { lineStyle: { color: '#1a1c1f', type: 'dashed' } },
+        axisLabel: { color: '#71717A' },
+        splitLine: { lineStyle: { color: '#27272A', type: 'dashed' } },
         name: 'Frequency',
-        nameTextStyle: { color: '#6b7280', fontSize: 12 },
+        nameTextStyle: { color: '#71717A', fontSize: 12 },
       },
       toolbox: {
         right: 10,
         top: -5,
-        feature: { saveAsImage: { title: 'Export PNG', pixelRatio: 2, backgroundColor: '#0b0c10' } },
-        iconStyle: { borderColor: '#6b7280' },
+        feature: { saveAsImage: { title: 'Export PNG', pixelRatio: 2, backgroundColor: '#111113' } },
+        iconStyle: { borderColor: '#52525B' },
       },
       series,
     };
