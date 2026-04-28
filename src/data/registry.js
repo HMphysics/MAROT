@@ -1,5 +1,5 @@
 import { pulse, helix, vector, vortex, cascade, equipoise, invariant } from './strategies';
-import { spy, qqq, gld, spyGld5050, portfolio6040 } from './benchmarks';
+import { spy, qqq, gld, spyGld5050 } from './benchmarks';
 
 export const strategies = [
   {
@@ -147,19 +147,6 @@ export const benchmarks = [
     is_public: true,
     order: 4,
     data: spyGld5050,
-  },
-  {
-    id: 'portfolio-60-40',
-    name: 'Equity & Gold 60/40',
-    slug: 'portfolio-60-40',
-    type: 'benchmark',
-    category: 'allocation',
-    color: '#34D399',
-    description: '60% S&P 500 / 40% gold portfolio.',
-    inception_date: '2005-05-03',
-    is_public: true,
-    order: 5,
-    data: portfolio6040,
   },
 ];
 
