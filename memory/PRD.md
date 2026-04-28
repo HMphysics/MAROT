@@ -1,54 +1,50 @@
 # Marot Strategies — PRD
 
-## Problem Statement
-Quant Strategies comparison page + Investment Calculator for Marot Strategies. All static JSON, no backend.
+## What's Been Implemented
 
-## Architecture
-- **Stack**: Vite + React 18 + Tailwind + shadcn/ui + ECharts + framer-motion
-- **Data**: Static JSON in `src/data/strategies/` and `src/data/benchmarks/`
-- **Registry**: `src/data/registry.js` — central registry with metadata
-- **Normalizer**: `src/lib/seriesNormalizer.js` — tolerant parser
-- **Metrics**: Extended `src/lib/metricsCalculator.js`
-- **Charts**: All use `xAxis: 'time'` with unified axis + forward-fill via `src/lib/chartUtils.js`
-- **Calculator**: `src/lib/investmentCalculator.js` with XIRR (Newton-Raphson)
+### Quant Strategies (/quant-strategies) - EN
+- 7 strategies: Pulse, Helix, Vector, Vortex, Cascade, Equipoise, Invariant
+- 4 benchmarks: S&P 500, Nasdaq 100, Gold, Equity & Gold 50/50
+- Charts: Equity Curve, Drawdown, Rolling Sharpe, Risk/Return, Histogram, Correlation Heatmap
+- Investment Calculator: Accumulation, Withdrawal, Mixed modes with XIRR
+- Metrics Table always visible below charts
+- Watermark "MAROT STRATEGIES" on all charts
 
-## What's Been Implemented (2026-04-22)
-- [x] Data structure: strategies + benchmarks + registry (12 series total)
-- [x] 7 strategies: Ares QQQ, Combinada, BES, Deimos, Fobos, Janus, Tyr
-- [x] 5 benchmarks: SPY, QQQ, GLD, 50/50, 60/40
-- [x] Extended metrics: Sortino, Calmar, IR, Beta, Alpha, TE, etc.
-- [x] 5 chart components + Metrics Table (always visible below)
-- [x] All charts: neutral dark backgrounds, watermark "MAROT STRATEGIES"
-- [x] Unified axis + forward-fill for mixed-frequency data
-- [x] Time axis for proper tooltip with all series
-- [x] Lines end at last data point (no false flat extension)
-- [x] Rebased to 100 mode with clear UX (base date, axis labels)
-- [x] URL state persistence, Export CSV/PNG
-- [x] **Investment Calculator** (new): 3 modes (Accumulation, Withdrawal, Mixed)
-  - XIRR calculation, contributions/withdrawals with inflation
-  - % initial, % current, fixed amount withdrawal types
-  - Summary card, chart with net invested line, results table
-  - Depletion detection, survival tracking
-- [x] Switch toggles visible (cyan ON, gray OFF)
-- [x] Benchmark colors distinguishable
+### Auth System (2026-04-28)
+- Supabase `profiles` table with role (admin/user) and subscription fields
+- Auto-profile creation on signup via DB trigger
+- Admin auto-detection for hardcoded email list
+- ProtectedRoute component (requireAuth, requireAdmin, requireSubscription + showPaywall)
+- Pages: /login, /signup, /account
+- Header: auth-aware (login/signup vs avatar dropdown)
+- /admin/* routes protected with requireAdmin
 
-## Files Created/Modified
-### New files
-- `src/data/` — all strategy/benchmark JSONs + registry + README
-- `src/lib/seriesNormalizer.js`, `chartUtils.js`, `chartTheme.js`, `investmentCalculator.js`
-- `src/components/quant/` — 7 components (EquityCurve, Drawdown, RollingSharpe, RiskReturnScatter, MonthlyHistogram, MetricsTable, InvestmentCalculator)
-- `src/pages/QuantStrategiesPage.jsx`
+### Services Page (/services) - ES
+- 3 pricing tiers: Marot Research (60€/mo), Marot Strategies (34€/mo), Marot Total (72€/mo)
+- Monthly/Annual toggle with 28% savings badge
+- FAQ section, custom CTA
+- Placeholder for payment integration
 
-### Modified
-- `src/App.jsx` — route
-- `src/components/Header.jsx`, `MobileMenu.jsx` — nav link
-- `src/lib/metricsCalculator.js` — extended metrics
-- `src/components/ui/switch.jsx` — visibility fix
+### Research Terminal (/research?category=Terminal)
+- Terminal tab alongside White Papers, Market Analysis
+- Paywall for non-subscribers (lock icon + CTA to /services)
+- Placeholder content for subscribers
+
+## SQL Migration
+Run `/supabase/migrations/001_profiles.sql` in Supabase SQL Editor.
+
+## Activate subscription for testing
+```sql
+UPDATE public.profiles 
+  SET subscription_tier = 'total', 
+      subscription_status = 'active', 
+      subscription_expires_at = '2027-01-01' 
+  WHERE email = 'cyclefundinvest@gmail.com';
+```
 
 ## Backlog
-- P1: Custom date range calendar picker
-- P1: Correlation matrix heatmap
-- P2: Year-over-year returns heatmap
-- P2: Monte Carlo simulation for withdrawal scenarios
+- P0: Stripe/payment integration for /services
+- P1: Email verification flow
+- P1: Password reset page
+- P2: Monte Carlo simulation
 - P2: PDF report generation
-- P3: Multi-currency support

@@ -18,15 +18,9 @@ const AdminDashboardPage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    checkAuth();
     fetchPosts();
     fetchStats();
   }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) navigate('/admin/login');
-  };
 
   const fetchStats = async () => {
     const { count } = await supabase.from('subscribers').select('*', { count: 'exact' });

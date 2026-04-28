@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, NavLink as RouterNavLink } from 'react-router-dom';
-import { ChevronDown, User, LayoutDashboard, Menu } from 'lucide-react';
+import { ChevronDown, User, LayoutDashboard, Menu, LogOut, UserCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/SupabaseAuthContext';
-// MarotLogo import removed as per task
 import MobileMenu from '@/components/MobileMenu';
 
 const NavLink = ({ to, children }) => {
@@ -21,7 +21,7 @@ const NavLink = ({ to, children }) => {
   if (isExternalOrPlaceholder) {
     return (
       <button
-        onClick={() => toast({ description: "🚧 This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀" })}
+        onClick={() => toast({ description: "This feature isn't implemented yet." })}
         className="text-sm font-medium text-gray-300 hover:text-white transition-colors uppercase"
       >
         {children}
@@ -42,7 +42,7 @@ const NavLink = ({ to, children }) => {
 };
 
 const Header = () => {
-  const { user } = useAuth();
+  const { user, isAdmin, signOut, profile } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -54,7 +54,6 @@ const Header = () => {
           transition={{ duration: 0.8 }}
           className="max-w-7xl mx-auto flex justify-between items-center"
         >
-          {/* Company Name as plain text */}
           <Link to="/" className="flex items-center gap-4 relative z-40 group">
             <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-widest leading-none">
               MAROT STRATEGIES
@@ -77,24 +76,58 @@ const Header = () => {
                 <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
                   <Link to="/research?category=Market Analysis" className="w-full">Market Analysis</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
+                  <Link to="/research?category=Terminal" className="w-full">Terminal</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <NavLink to="/services">SERVICES</NavLink>
             <NavLink to="/contact">CONTACT US</NavLink>
             <div className="border-l border-gray-600 h-6"></div>
             
             {user ? (
-              <Link to="/admin/dashboard" title="Admin Dashboard">
-                <LayoutDashboard className="w-5 h-5 text-blue-400 hover:text-blue-300 transition-colors" />
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
+                  <div className="w-8 h-8 bg-cyan-900/40 rounded-full flex items-center justify-center border border-cyan-800/50">
+                    <User className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <span className="text-sm text-zinc-300 max-w-[120px] truncate hidden lg:inline">
+                    {profile?.full_name || user.email?.split('@')[0]}
+                  </span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-900 border-gray-800 text-white w-48">
+                  <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
+                    <Link to="/account" className="w-full flex items-center gap-2">
+                      <UserCircle className="w-4 h-4" /> Mi cuenta
+                    </Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
+                      <Link to="/admin/dashboard" className="w-full flex items-center gap-2">
+                        <LayoutDashboard className="w-4 h-4" /> Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator className="bg-gray-800" />
+                  <DropdownMenuItem onClick={() => signOut()} className="focus:bg-gray-800 focus:text-white cursor-pointer flex items-center gap-2 text-red-400">
+                    <LogOut className="w-4 h-4" /> Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <Link to="/admin/login" title="Login">
-                <User className="w-5 h-5 text-gray-300 hover:text-white transition-colors" />
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="text-sm text-zinc-300 hover:text-white transition-colors">
+                  Iniciar sesión
+                </Link>
+                <Link to="/signup" className="text-sm bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg transition-colors font-medium">
+                  Registrarse
+                </Link>
+              </div>
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile */}
           <div className="flex md:hidden z-40">
              <Button 
                 variant="ghost" 
@@ -105,11 +138,9 @@ const Header = () => {
                 <Menu className="w-6 h-6" />
              </Button>
           </div>
-
         </motion.div>
       </header>
       
-      {/* Mobile Menu Slide-out */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </>
   );

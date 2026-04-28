@@ -3,20 +3,24 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/customSupabaseClient';
-import { ArrowRight, FileText, BarChart, BookOpen, Clock } from 'lucide-react';
+import { ArrowRight, FileText, BarChart, BookOpen, Clock, Lock, Terminal } from 'lucide-react';
 import Header from '@/components/Header';
 import NewsletterForm from '@/components/NewsletterForm';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
+import { Button } from '@/components/ui/button';
 
 const categories = [
   { id: 'all', label: 'All Research' },
   { id: 'White Papers', label: 'White Papers' },
   { id: 'Market Analysis', label: 'Market Analysis' },
+  { id: 'Terminal', label: 'Terminal' },
 ];
 
 const ResearchPage = () => {
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const { user, hasActiveSubscription } = useAuth();
 
   // Parse URL parameters to set initial category
   useEffect(() => {
@@ -94,6 +98,32 @@ const ResearchPage = () => {
           ))}
         </div>
 
+        {/* Terminal section */}
+        {selectedCategory === 'Terminal' ? (
+          <div className="mb-20">
+            {user && hasActiveSubscription('research') ? (
+              <div className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-12 text-center">
+                <Terminal className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
+                <h2 className="text-3xl font-bold text-white mb-4">Terminal cuantitativo</h2>
+                <p className="text-zinc-400 text-lg">Próximamente: indicadores propietarios en tiempo real</p>
+              </div>
+            ) : (
+              <div className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-12 text-center">
+                <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-zinc-700">
+                  <Lock className="w-10 h-10 text-zinc-500" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-3">Contenido exclusivo para suscriptores</h2>
+                <p className="text-zinc-400 max-w-md mx-auto mb-6">
+                  Indicadores cuantitativos propietarios en tiempo real. Acceso exclusivo para suscriptores de Marot Research o Marot Total.
+                </p>
+                <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white px-8">
+                  <Link to="/services">Ver planes</Link>
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+        <>
         {/* Featured / Grid */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
@@ -157,6 +187,8 @@ const ResearchPage = () => {
                 </div>
             )}
           </div>
+        )}
+        </>
         )}
 
         {/* Newsletter Section */}

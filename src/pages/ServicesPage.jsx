@@ -1,0 +1,240 @@
+import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
+import { motion } from 'framer-motion';
+import { Check, ChevronDown, ChevronUp, Sparkles, Zap, Crown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
+import { useToast } from '@/components/ui/use-toast';
+import Header from '@/components/Header';
+
+const plans = [
+  {
+    tier: 'research',
+    name: 'Marot Research',
+    subtitle: 'Análisis cuantitativo profundo',
+    icon: Sparkles,
+    monthly: 6000,
+    annual: 51840,
+    annualSavings: 20160,
+    features: [
+      'Terminal con indicadores propietarios',
+      'Bot de IA entrenado en valores financieros, papers académicos y datos de mercado',
+      'Acceso completo a /research (artículos premium)',
+      'Actualizaciones diarias de indicadores',
+      'Comunidad de research en Discord/Telegram',
+    ],
+    cta: 'Suscribirse a Research',
+    highlight: false,
+    badge: null,
+  },
+  {
+    tier: 'strategies',
+    name: 'Marot Strategies',
+    subtitle: 'Señales y estrategias en directo',
+    icon: Zap,
+    monthly: 3400,
+    annual: 29376,
+    annualSavings: 11424,
+    features: [
+      'Grupo privado con ideas de inversión',
+      'Señales de las estrategias cuant en tiempo real',
+      'Comentarios y rebalanceos en directo',
+      'Sesiones semanales con el equipo',
+      'Comunidad activa de inversores',
+    ],
+    cta: 'Suscribirse a Strategies',
+    highlight: true,
+    badge: 'Más popular',
+  },
+  {
+    tier: 'total',
+    name: 'Marot Total',
+    subtitle: 'Research + Strategies, todo incluido',
+    icon: Crown,
+    monthly: 7200,
+    annual: 62208,
+    annualSavings: 24192,
+    features: [
+      'Todo lo de Marot Research',
+      'Todo lo de Marot Strategies',
+      'Acceso prioritario a nuevas estrategias',
+      'Webinars exclusivos mensuales',
+      'Soporte directo del equipo',
+    ],
+    cta: 'Suscribirse a Total',
+    highlight: false,
+    badge: 'Mejor valor',
+  },
+];
+
+const fmtPrice = (cents) => {
+  const euros = cents / 100;
+  return euros.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+};
+
+const faqs = [
+  { q: '¿Puedo cancelar cuando quiera?', a: 'Sí, puedes cancelar tu suscripción en cualquier momento. Tendrás acceso hasta el final del periodo facturado.' },
+  { q: '¿Hay periodo de prueba?', a: 'No ofrecemos prueba gratuita, pero puedes cancelar dentro de los primeros 7 días para un reembolso completo.' },
+  { q: '¿Qué métodos de pago aceptáis?', a: 'Aceptamos tarjeta de crédito/débito (Visa, Mastercard, AMEX). Próximamente integraremos transferencia bancaria y PayPal.' },
+  { q: '¿Puedo cambiar de plan?', a: 'Sí, puedes subir o bajar de plan en cualquier momento. El cambio se aplica de forma prorrateada.' },
+  { q: '¿Los precios incluyen IVA?', a: 'Los precios mostrados no incluyen IVA. Se aplicará el IVA correspondiente según tu país de residencia.' },
+  { q: '¿Cómo accedo al contenido premium?', a: 'Una vez suscrito, todo el contenido premium se desbloquea automáticamente al iniciar sesión con tu cuenta.' },
+];
+
+const ServicesPage = () => {
+  const [isAnnual, setIsAnnual] = useState(true);
+  const [openFaq, setOpenFaq] = useState(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSubscribe = (tier) => {
+    if (!user) {
+      window.location.href = `/signup?intent=${tier}`;
+      return;
+    }
+    toast({
+      title: 'Próximamente',
+      description: 'Pago con tarjeta en desarrollo. Mientras tanto, contacta con info@marotstrategies.com para activar tu suscripción.',
+    });
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Servicios - MAROT STRATEGIES</title>
+        <meta name="description" content="Planes de suscripción de Marot Strategies: Research, Strategies y Total." />
+      </Helmet>
+      <div className="min-h-screen bg-[#0b0c10] text-white">
+        <Header />
+
+        <main className="pt-32 pb-20 px-4 md:px-8">
+          {/* Hero */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16 max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Nuestros servicios</h1>
+            <p className="text-xl text-zinc-400">Herramientas cuantitativas y señales de inversión para tomar decisiones con ventaja.</p>
+          </motion.div>
+
+          {/* Toggle */}
+          <div className="flex justify-center items-center gap-4 mb-14">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-white' : 'text-zinc-500'}`}>Mensual</span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className={`relative w-14 h-7 rounded-full transition-colors ${isAnnual ? 'bg-cyan-600' : 'bg-zinc-700'}`}
+              data-testid="pricing-toggle"
+            >
+              <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full transition-transform ${isAnnual ? 'translate-x-7' : 'translate-x-0.5'}`} />
+            </button>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-white' : 'text-zinc-500'}`}>Anual</span>
+            {isAnnual && (
+              <span className="text-xs font-bold bg-cyan-900/40 text-cyan-400 px-2.5 py-1 rounded-full border border-cyan-800/50">
+                Ahorra 28%
+              </span>
+            )}
+          </div>
+
+          {/* Pricing cards */}
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+            {plans.map((plan, idx) => {
+              const Icon = plan.icon;
+              const price = isAnnual ? plan.annual : plan.monthly;
+              const monthlyEquiv = isAnnual ? Math.round(plan.annual / 12) : null;
+
+              return (
+                <motion.div
+                  key={plan.tier}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className={`relative rounded-2xl p-8 flex flex-col ${
+                    plan.highlight
+                      ? 'bg-zinc-900/80 border-2 border-cyan-500/60 shadow-lg shadow-cyan-900/20'
+                      : 'bg-zinc-900/40 border border-zinc-800'
+                  }`}
+                >
+                  {plan.badge && (
+                    <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full ${
+                      plan.highlight
+                        ? 'bg-cyan-500 text-black'
+                        : 'bg-zinc-700 text-zinc-200'
+                    }`}>
+                      {plan.badge}
+                    </span>
+                  )}
+
+                  <div className="flex items-center gap-3 mb-2">
+                    <Icon className={`w-6 h-6 ${plan.highlight ? 'text-cyan-400' : 'text-zinc-400'}`} />
+                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                  </div>
+                  <p className="text-zinc-500 text-sm mb-6">{plan.subtitle}</p>
+
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold">{fmtPrice(price)}</span>
+                    <span className="text-zinc-500 text-sm">/{isAnnual ? 'año' : 'mes'}</span>
+                    {isAnnual && monthlyEquiv && (
+                      <p className="text-zinc-500 text-sm mt-1">
+                        ≈ {fmtPrice(monthlyEquiv)}/mes — <span className="text-cyan-400">Ahorra {fmtPrice(plan.annualSavings)}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <ul className="space-y-3 mb-8 flex-grow">
+                    {plan.features.map((f, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-zinc-300">
+                        <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlight ? 'text-cyan-400' : 'text-zinc-500'}`} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    onClick={() => handleSubscribe(plan.tier)}
+                    className={`w-full py-6 rounded-lg font-bold text-base ${
+                      plan.highlight
+                        ? 'bg-gradient-to-r from-cyan-600 to-cyan-500 text-white hover:from-cyan-500 hover:to-cyan-400'
+                        : 'bg-zinc-800 text-white hover:bg-zinc-700 border border-zinc-700'
+                    }`}
+                  >
+                    {plan.cta}
+                  </Button>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* FAQ */}
+          <div className="max-w-3xl mx-auto mb-24">
+            <h2 className="text-3xl font-bold text-center mb-10">Preguntas frecuentes</h2>
+            <div className="space-y-3">
+              {faqs.map((faq, i) => (
+                <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex justify-between items-center px-6 py-4 text-left text-white font-medium hover:bg-zinc-800/30 transition-colors"
+                  >
+                    {faq.q}
+                    {openFaq === i ? <ChevronUp className="w-5 h-5 text-zinc-400" /> : <ChevronDown className="w-5 h-5 text-zinc-400" />}
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-6 pb-4 text-zinc-400 text-sm">{faq.a}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom CTA */}
+          <div className="max-w-2xl mx-auto text-center bg-zinc-900/40 border border-zinc-800 rounded-2xl p-10">
+            <h2 className="text-2xl font-bold mb-3">¿Necesitas algo a medida?</h2>
+            <p className="text-zinc-400 mb-6">Ofrecemos soluciones personalizadas para fondos, family offices y equipos de inversión.</p>
+            <Button asChild className="bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 px-8">
+              <Link to="/contact">Contactar</Link>
+            </Button>
+          </div>
+        </main>
+      </div>
+    </>
+  );
+};
+
+export default ServicesPage;
