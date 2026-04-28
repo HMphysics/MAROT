@@ -36,7 +36,7 @@ const QuantStrategiesPage = () => {
 
   // Parse URL state once on mount
   const initRef = useRef({
-    selected: searchParams.get('s')?.split(',').filter(Boolean) || ['ares-qqq', 'combinada', 'spy'],
+    selected: searchParams.get('s')?.split(',').filter(Boolean) || ['pulse', 'helix', 'spy'],
     benchmark: searchParams.get('b') || 'spy',
     log: searchParams.get('log') === '1',
     rebased: searchParams.get('r') !== '0',
@@ -204,8 +204,8 @@ const QuantStrategiesPage = () => {
                     </div>
                     <p className="text-[10px] text-zinc-600 mt-1.5 leading-relaxed">
                       {isRebased
-                        ? 'Todas las series parten de 100 en la fecha de inicio común, para comparar crecimiento relativo.'
-                        : 'Muestra retorno acumulado (%) desde el inicio de cada serie.'}
+                        ? 'All series start at 100 on the common start date, to compare relative growth.'
+                        : 'Shows cumulative return (%) from each series\' own start date.'}
                     </p>
                   </div>
                 </div>

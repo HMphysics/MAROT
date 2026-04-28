@@ -12,7 +12,7 @@ import { watermark } from '@/lib/chartTheme';
 
 const fmtMoney = (v) => {
   if (v == null || !isFinite(v)) return '-';
-  return v.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' €';
+  return v.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' €';
 };
 const fmtPct = (v) => {
   if (v == null || !isFinite(v)) return '-';
@@ -70,16 +70,16 @@ const SummaryCard = ({ mode, results, selectedIds }) => {
     return (
       <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4 mb-4" data-testid="calc-summary">
         <p className="text-sm text-zinc-400">
-          Invertiste <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span> entre {best.history?.[0]?.date} y {best.history?.[best.history.length - 1]?.date}
+          You invested <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span> between {best.history?.[0]?.date} and {best.history?.[best.history.length - 1]?.date}
         </p>
         <p className="text-sm mt-1">
-          <span className="text-cyan-400 font-semibold">{bestItem?.name}</span> lo habría convertido en{' '}
+          <span className="text-cyan-400 font-semibold">{bestItem?.name}</span> would have turned it into{' '}
           <span className="text-white font-semibold">{fmtMoney(best.finalValue)}</span>{' '}
           <span className="text-emerald-400">(+{fmtPct(best.totalReturnPct)})</span>
         </p>
         {benchEntry && benchEntry.id !== best.id && (
           <p className="text-sm text-zinc-500 mt-1">
-            vs {fmtMoney(benchEntry.finalValue)} del {registry.find((r) => r.id === benchEntry.id)?.name}
+            vs {fmtMoney(benchEntry.finalValue)} from {registry.find((r) => r.id === benchEntry.id)?.name}
           </p>
         )}
       </div>
@@ -91,14 +91,14 @@ const SummaryCard = ({ mode, results, selectedIds }) => {
     return (
       <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4 mb-4" data-testid="calc-summary">
         <p className="text-sm text-zinc-400">
-          Empezaste con <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span>, retirando periodicamente durante {best.durationYears} años
+          Started with <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span>, withdrawing periodically over {best.durationYears} years
         </p>
         {allDepleted ? (
-          <p className="text-sm text-red-400 mt-1">Ninguna estrategia habría sobrevivido este escenario</p>
+          <p className="text-sm text-red-400 mt-1">No strategy would have survived this scenario</p>
         ) : (
           <p className="text-sm mt-1">
-            <span className="text-cyan-400 font-semibold">{bestItem?.name}</span>: te quedan{' '}
-            <span className="text-white font-semibold">{fmtMoney(best.finalValue)}</span> al final
+            <span className="text-cyan-400 font-semibold">{bestItem?.name}</span>: you would have{' '}
+            <span className="text-white font-semibold">{fmtMoney(best.finalValue)}</span> remaining
           </p>
         )}
       </div>
@@ -109,11 +109,11 @@ const SummaryCard = ({ mode, results, selectedIds }) => {
   return (
     <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4 mb-4" data-testid="calc-summary">
       <p className="text-sm text-zinc-400">
-        Aportaste <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span>,
-        retiraste <span className="text-white font-semibold">{fmtMoney(best.totalWithdrawn)}</span>
+        Invested <span className="text-white font-semibold">{fmtMoney(best.totalInvested)}</span>,
+        withdrew <span className="text-white font-semibold">{fmtMoney(best.totalWithdrawn)}</span>
       </p>
       <p className="text-sm mt-1">
-        Mejor resultado final: <span className="text-cyan-400 font-semibold">{bestItem?.name}</span> con{' '}
+        Best final result: <span className="text-cyan-400 font-semibold">{bestItem?.name}</span> with{' '}
         <span className="text-white font-semibold">{fmtMoney(best.finalValue)}</span>
       </p>
     </div>
@@ -172,14 +172,14 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
     const contrib = parseFloat(contribAmount) || 0;
     const withdraw = parseFloat(withdrawAmount) || 0;
 
-    if (isNaN(initial) || initial < 0) { setError('Inversión inicial no válida'); return; }
-    if (mode === 'accumulation' && initial === 0 && contrib === 0) { setError('Inversión inicial o aportación debe ser > 0'); return; }
-    if ((mode === 'withdrawal' || mode === 'mixed') && initial === 0) { setError('Capital inicial debe ser > 0 en modo retirada'); return; }
-    if (startDate >= endDate) { setError('Fecha inicio debe ser anterior a fecha fin'); return; }
+    if (isNaN(initial) || initial < 0) { setError('Invalid initial investment'); return; }
+    if (mode === 'accumulation' && initial === 0 && contrib === 0) { setError('Enter at least an initial amount or a periodic contribution'); return; }
+    if ((mode === 'withdrawal' || mode === 'mixed') && initial === 0) { setError('Initial capital must be > 0 in withdrawal mode'); return; }
+    if (startDate >= endDate) { setError('Start date must be earlier than end date'); return; }
     if (mode === 'mixed' && contribEndDate && (contribEndDate <= startDate || contribEndDate >= endDate)) {
-      setError('Fecha fin de aportaciones debe estar entre inicio y fin'); return;
+      setError('Contribution end date must be between start and end'); return;
     }
-    if (selectedIds.length === 0) { setError('Selecciona al menos una serie'); return; }
+    if (selectedIds.length === 0) { setError('Select at least one series'); return; }
 
     const newResults = {};
     for (const id of selectedIds) {
@@ -247,7 +247,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
       // Mark depletion
       if (r.depletedDate) {
         series.push({
-          name: `${item.name} (agotado)`,
+          name: `${item.name} (depleted)`,
           type: 'scatter', symbol: 'circle', symbolSize: 12,
           data: [[r.depletedDate, 0]],
           itemStyle: { color: '#EF4444', borderColor: '#fff', borderWidth: 2 },
@@ -258,7 +258,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
       if (!hasNetInvested && r.history.length > 0) {
         hasNetInvested = true;
         series.push({
-          name: 'Capital neto invertido',
+          name: 'Net invested capital',
           type: 'line', smooth: false, symbol: 'none',
           data: r.history.map((h) => [h.date, h.netInvested]),
           lineStyle: { color: '#52525B', width: 1.5, type: 'dashed' },
@@ -289,7 +289,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
             const v = p.value[1];
             res += `<div style="display:flex;justify-content:space-between;gap:20px;margin-top:4px">
               <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${p.color};display:inline-block"></span>${p.seriesName}</span>
-              <span style="font-weight:bold;font-family:monospace">${v.toLocaleString('es-ES', { maximumFractionDigits: 0 })} €</span>
+              <span style="font-weight:bold;font-family:monospace">${v.toLocaleString('en-US', { maximumFractionDigits: 0 })} €</span>
             </div>`;
           });
           return res;
@@ -299,7 +299,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
       grid: { top: 40, right: 20, bottom: 50, left: 60, containLabel: true },
       xAxis: { type: 'time', axisLine: { lineStyle: { color: '#27272A' } }, axisLabel: { color: '#71717A', fontSize: 11 }, splitLine: { show: false } },
       yAxis: {
-        type: 'value', name: 'Valor (€)', nameLocation: 'middle', nameGap: 55,
+        type: 'value', name: 'Value (€)', nameLocation: 'middle', nameGap: 55,
         nameTextStyle: { color: '#52525B', fontSize: 11 },
         axisLabel: { color: '#71717A', fontSize: 11, formatter: (v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v },
         splitLine: { lineStyle: { color: '#27272A', type: 'dashed' } },
@@ -329,46 +329,46 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
       <div className="lg:w-72 flex-shrink-0 space-y-4">
         {/* Mode */}
         <div className="bg-[#141416] border border-zinc-800 rounded-lg p-4">
-          <h3 className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-3">Modo</h3>
+          <h3 className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-3">Mode</h3>
           <RadioGroup value={mode} onValueChange={handleModeChange} className="space-y-2">
             <div className="flex items-center gap-2">
               <RadioGroupItem value="accumulation" id="mode-acc" className="border-zinc-600" />
-              <Label htmlFor="mode-acc" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5 text-emerald-400" />Acumulación</Label>
+              <Label htmlFor="mode-acc" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5 text-emerald-400" />Accumulation</Label>
             </div>
             <div className="flex items-center gap-2">
               <RadioGroupItem value="withdrawal" id="mode-wd" className="border-zinc-600" />
-              <Label htmlFor="mode-wd" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><TrendingDown className="w-3.5 h-3.5 text-red-400" />Retirada</Label>
+              <Label htmlFor="mode-wd" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><TrendingDown className="w-3.5 h-3.5 text-red-400" />Withdrawal</Label>
             </div>
             <div className="flex items-center gap-2">
               <RadioGroupItem value="mixed" id="mode-mix" className="border-zinc-600" />
-              <Label htmlFor="mode-mix" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><Shuffle className="w-3.5 h-3.5 text-amber-400" />Mixto</Label>
+              <Label htmlFor="mode-mix" className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1.5"><Shuffle className="w-3.5 h-3.5 text-amber-400" />Mixed</Label>
             </div>
           </RadioGroup>
         </div>
 
         {/* Basic params */}
         <div className="bg-[#141416] border border-zinc-800 rounded-lg p-4 space-y-3">
-          <InputField label="Inversión inicial" value={initialAmount} onChange={setInitialAmount} suffix="€" min="0" />
-          <InputField label="Fecha inicio" value={startDate} onChange={setStartDate} type="date" />
-          <InputField label="Fecha fin" value={endDate} onChange={setEndDate} type="date" />
+          <InputField label="Initial investment" value={initialAmount} onChange={setInitialAmount} suffix="€" min="0" />
+          <InputField label="Start date" value={startDate} onChange={setStartDate} type="date" />
+          <InputField label="End date" value={endDate} onChange={setEndDate} type="date" />
         </div>
 
         {/* Contributions */}
         {showContrib && (
           <div className="bg-[#141416] border border-cyan-900/30 rounded-lg p-4 space-y-3">
-            <h3 className="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold">Aportaciones</h3>
-            <InputField label="Importe" value={contribAmount} onChange={setContribAmount} suffix="€" min="0" />
-            <SelectField label="Frecuencia" value={contribFreq} onChange={setContribFreq} options={[
-              { value: 'none', label: 'Ninguna' }, { value: 'monthly', label: 'Mensual' },
-              { value: 'quarterly', label: 'Trimestral' }, { value: 'annual', label: 'Anual' },
+            <h3 className="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold">Contributions</h3>
+            <InputField label="Amount" value={contribAmount} onChange={setContribAmount} suffix="€" min="0" />
+            <SelectField label="Frequency" value={contribFreq} onChange={setContribFreq} options={[
+              { value: 'none', label: 'None' }, { value: 'monthly', label: 'Monthly' },
+              { value: 'quarterly', label: 'Quarterly' }, { value: 'annual', label: 'Annual' },
             ]} />
-            <InputField label="Día del mes" value={contribDay} onChange={setContribDay} min="1" max="28" />
+            <InputField label="Day of month" value={contribDay} onChange={setContribDay} min="1" max="28" />
             <label className="flex items-center gap-2 cursor-pointer">
               <Checkbox checked={contribInflation} onCheckedChange={setContribInflation} className="border-zinc-600" />
-              <span className="text-xs text-zinc-400">Ajustar inflación 2%/año</span>
+              <span className="text-xs text-zinc-400">Adjust for 2% annual inflation</span>
             </label>
             {mode === 'mixed' && (
-              <InputField label="Fin de aportaciones" value={contribEndDate} onChange={setContribEndDate} type="date" />
+              <InputField label="End of contributions" value={contribEndDate} onChange={setContribEndDate} type="date" />
             )}
           </div>
         )}
@@ -376,36 +376,36 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
         {/* Withdrawals */}
         {showWithdraw && (
           <div className="bg-[#141416] border border-red-900/30 rounded-lg p-4 space-y-3">
-            <h3 className="text-[10px] uppercase tracking-wider text-red-500 font-semibold">Retiradas</h3>
+            <h3 className="text-[10px] uppercase tracking-wider text-red-500 font-semibold">Withdrawals</h3>
             <RadioGroup value={withdrawType} onValueChange={setWithdrawType} className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="fixed" id="wd-fixed" className="border-zinc-600" />
-                <Label htmlFor="wd-fixed" className="text-xs text-zinc-400 cursor-pointer">Importe fijo</Label>
+                <Label htmlFor="wd-fixed" className="text-xs text-zinc-400 cursor-pointer">Fixed amount</Label>
               </div>
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="pct_initial" id="wd-pct-init" className="border-zinc-600" />
-                <Label htmlFor="wd-pct-init" className="text-xs text-zinc-400 cursor-pointer">% del capital inicial</Label>
+                <Label htmlFor="wd-pct-init" className="text-xs text-zinc-400 cursor-pointer">% of initial capital</Label>
               </div>
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="pct_current" id="wd-pct-cur" className="border-zinc-600" />
-                <Label htmlFor="wd-pct-cur" className="text-xs text-zinc-400 cursor-pointer">% del capital actual</Label>
+                <Label htmlFor="wd-pct-cur" className="text-xs text-zinc-400 cursor-pointer">% of current capital</Label>
               </div>
             </RadioGroup>
             <InputField
-              label={withdrawType === 'fixed' ? '€ por retirada' : withdrawType === 'pct_initial' ? '% anual sobre capital inicial' : '% anual sobre capital actual'}
+              label={withdrawType === 'fixed' ? '€ per withdrawal' : withdrawType === 'pct_initial' ? '% annual on initial capital' : '% annual on current capital'}
               value={withdrawAmount}
               onChange={setWithdrawAmount}
               suffix={withdrawType === 'fixed' ? '€' : '%'}
               min="0"
             />
-            <SelectField label="Frecuencia" value={withdrawFreq} onChange={setWithdrawFreq} options={[
-              { value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'annual', label: 'Anual' },
+            <SelectField label="Frequency" value={withdrawFreq} onChange={setWithdrawFreq} options={[
+              { value: 'monthly', label: 'Monthly' }, { value: 'quarterly', label: 'Quarterly' }, { value: 'annual', label: 'Annual' },
             ]} />
-            <InputField label="Día del mes" value={withdrawDay} onChange={setWithdrawDay} min="1" max="28" />
+            <InputField label="Day of month" value={withdrawDay} onChange={setWithdrawDay} min="1" max="28" />
             {(withdrawType === 'fixed' || withdrawType === 'pct_initial') && (
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox checked={withdrawInflation} onCheckedChange={setWithdrawInflation} className="border-zinc-600" />
-                <span className="text-xs text-zinc-400">Ajustar inflación 2%/año</span>
+                <span className="text-xs text-zinc-400">Adjust for 2% annual inflation</span>
               </label>
             )}
           </div>
@@ -413,7 +413,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
 
         {/* Series selector */}
         <div className="bg-[#141416] border border-zinc-800 rounded-lg p-4">
-          <h3 className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-2">Comparar</h3>
+          <h3 className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-2">Compare</h3>
           <div className="space-y-1.5 max-h-48 overflow-y-auto">
             {[...strategies, ...benchmarksList].map((s) => (
               <label key={s.id} className="flex items-center gap-2 cursor-pointer text-xs">
@@ -436,7 +436,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
           data-testid="calc-calculate-btn"
         >
           <Calculator className="w-4 h-4 inline mr-2" />
-          Calcular
+          Calculate
         </button>
         {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
       </div>
@@ -445,7 +445,7 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
       <div className="flex-1 min-w-0">
         {!results ? (
           <div className="h-[400px] flex items-center justify-center text-zinc-600 text-sm">
-            Configura los parámetros y pulsa "Calcular"
+            Set the parameters and click "Calculate"
           </div>
         ) : (
           <div className="space-y-5">
@@ -464,15 +464,15 @@ const InvestmentCalculator = ({ pageSelectedItems, normalizedData }) => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-zinc-800 bg-zinc-900/50">
-                      <th className="px-3 py-2.5 text-left font-medium text-zinc-400">Nombre</th>
-                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Invertido</th>
-                      {showWithdraw && <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Retirado</th>}
-                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Valor final</th>
-                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Rentabilidad</th>
+                      <th className="px-3 py-2.5 text-left font-medium text-zinc-400">Name</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Invested</th>
+                      {showWithdraw && <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Withdrawn</th>}
+                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Final value</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Return</th>
                       <th className="px-3 py-2.5 text-right font-medium text-zinc-400">IRR</th>
                       <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Max DD</th>
-                      {showWithdraw && <th className="px-3 py-2.5 text-center font-medium text-zinc-400">Duró</th>}
-                      {showWithdraw && <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Años</th>}
+                      {showWithdraw && <th className="px-3 py-2.5 text-center font-medium text-zinc-400">Survived?</th>}
+                      {showWithdraw && <th className="px-3 py-2.5 text-right font-medium text-zinc-400">Years</th>}
                     </tr>
                   </thead>
                   <tbody>

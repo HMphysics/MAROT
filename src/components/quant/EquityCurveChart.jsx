@@ -74,7 +74,7 @@ const EquityCurveChart = ({ selectedItems, registry, normalizedData, isLog, isRe
 
     if (echartsSeries.length === 0) return null;
 
-    const yAxisName = isRebased ? 'Valor (base 100)' : 'Retorno acumulado (%)';
+    const yAxisName = isRebased ? 'Value (base 100)' : 'Cumulative return (%)';
     const yFormatter = isRebased ? (v) => v.toFixed(0) : (v) => `${v.toFixed(0)}%`;
     const titleSubtext = isRebased && commonStart ? `Base: ${commonStart}` : '';
 
