@@ -4,10 +4,9 @@
 - [- MAROT STRATEGIES](/investmentstrategies): No description available
 - [Admin Dashboard](/admindashboard): No description available
 - [Home - MAROT STRATEGIES](/home): Capture Trends. Power Decisions. Marot Strategies provides advanced quantitative investment models and market research to help you navigate global markets.
-- [Iniciar sesión - MAROT STRATEGIES](/login): No description available
 - [Manage Strategies - Admin](/strategymanagement): No description available
-- [Mi cuenta - MAROT STRATEGIES](/account): No description available
+- [My account - MAROT STRATEGIES](/account): No description available
 - [Quant Strategies - MAROT STRATEGIES](/quantstrategies): Compare quantitative strategies against benchmarks with advanced metrics and visualizations.
-- [Registrarse - MAROT STRATEGIES](/signup): No description available
 - [Restricted Access - MAROT STRATEGIES](/adminlogin): No description available
-- [Servicios - MAROT STRATEGIES](/services): Planes de suscripción de Marot Strategies: Research, Strategies y Total.
+- [Sign in - MAROT STRATEGIES](/login): No description available
+- [Sign up - MAROT STRATEGIES](/signup): No description available

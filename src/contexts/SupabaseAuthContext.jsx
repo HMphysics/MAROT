@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      toast({ variant: "destructive", title: "Error al registrarse", description: error.message });
+      toast({ variant: "destructive", title: "Sign-up failed", description: error.message });
       return { data: null, error };
     }
   }, [toast]);
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      toast({ variant: "destructive", title: "Error al iniciar sesión", description: error.message });
+      toast({ variant: "destructive", title: "Sign-in failed", description: error.message });
       return { data: null, error };
     }
   }, [toast]);
@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }) => {
       setProfile(null);
       return { error: null };
     } catch (error) {
-      toast({ variant: "destructive", title: "Error al cerrar sesión", description: error.message });
+      toast({ variant: "destructive", title: "Sign-out failed", description: error.message });
       return { error };
     }
   }, [toast]);

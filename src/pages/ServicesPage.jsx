@@ -12,74 +12,74 @@ const plans = [
   {
     tier: 'research',
     name: 'Marot Research',
-    subtitle: 'Análisis cuantitativo profundo',
+    subtitle: 'Deep quantitative research',
     icon: Sparkles,
     monthly: 6000,
     annual: 51840,
     annualSavings: 20160,
     features: [
-      'Terminal con indicadores propietarios',
-      'Bot de IA entrenado en valores financieros, papers académicos y datos de mercado',
-      'Acceso completo a /research (artículos premium)',
-      'Actualizaciones diarias de indicadores',
-      'Comunidad de research en Discord/Telegram',
+      'Terminal with proprietary indicators',
+      'AI bot trained on financial assets, academic papers and market data',
+      'Full access to /research (premium articles)',
+      'Daily indicator updates',
+      'Research community on Discord/Telegram',
     ],
-    cta: 'Suscribirse a Research',
+    cta: 'Subscribe to Research',
     highlight: false,
     badge: null,
   },
   {
     tier: 'strategies',
     name: 'Marot Strategies',
-    subtitle: 'Señales y estrategias en directo',
+    subtitle: 'Live signals and strategies',
     icon: Zap,
     monthly: 3400,
     annual: 29376,
     annualSavings: 11424,
     features: [
-      'Grupo privado con ideas de inversión',
-      'Señales de las estrategias cuant en tiempo real',
-      'Comentarios y rebalanceos en directo',
-      'Sesiones semanales con el equipo',
-      'Comunidad activa de inversores',
+      'Private group with investment ideas',
+      'Real-time signals from quant strategies',
+      'Live commentary and rebalancing',
+      'Weekly sessions with the team',
+      'Active community of investors',
     ],
-    cta: 'Suscribirse a Strategies',
+    cta: 'Subscribe to Strategies',
     highlight: true,
-    badge: 'Más popular',
+    badge: 'Most popular',
   },
   {
     tier: 'total',
     name: 'Marot Total',
-    subtitle: 'Research + Strategies, todo incluido',
+    subtitle: 'Research + Strategies, all included',
     icon: Crown,
     monthly: 7200,
     annual: 62208,
     annualSavings: 24192,
     features: [
-      'Todo lo de Marot Research',
-      'Todo lo de Marot Strategies',
-      'Acceso prioritario a nuevas estrategias',
-      'Webinars exclusivos mensuales',
-      'Soporte directo del equipo',
+      'Everything in Marot Research',
+      'Everything in Marot Strategies',
+      'Priority access to new strategies',
+      'Exclusive monthly webinars',
+      'Direct team support',
     ],
-    cta: 'Suscribirse a Total',
+    cta: 'Subscribe to Total',
     highlight: false,
-    badge: 'Mejor valor',
+    badge: 'Best value',
   },
 ];
 
 const fmtPrice = (cents) => {
   const euros = cents / 100;
-  return euros.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  return '€' + euros.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
 const faqs = [
-  { q: '¿Puedo cancelar cuando quiera?', a: 'Sí, puedes cancelar tu suscripción en cualquier momento. Tendrás acceso hasta el final del periodo facturado.' },
-  { q: '¿Hay periodo de prueba?', a: 'No ofrecemos prueba gratuita, pero puedes cancelar dentro de los primeros 7 días para un reembolso completo.' },
-  { q: '¿Qué métodos de pago aceptáis?', a: 'Aceptamos tarjeta de crédito/débito (Visa, Mastercard, AMEX). Próximamente integraremos transferencia bancaria y PayPal.' },
-  { q: '¿Puedo cambiar de plan?', a: 'Sí, puedes subir o bajar de plan en cualquier momento. El cambio se aplica de forma prorrateada.' },
-  { q: '¿Los precios incluyen IVA?', a: 'Los precios mostrados no incluyen IVA. Se aplicará el IVA correspondiente según tu país de residencia.' },
-  { q: '¿Cómo accedo al contenido premium?', a: 'Una vez suscrito, todo el contenido premium se desbloquea automáticamente al iniciar sesión con tu cuenta.' },
+  { q: 'Can I cancel anytime?', a: 'Yes, you can cancel your subscription at any time. You will retain access until the end of the current billing period.' },
+  { q: 'Is there a trial period?', a: 'We don\'t offer a free trial, but you can cancel within the first 7 days for a full refund.' },
+  { q: 'Which payment methods do you accept?', a: 'We accept credit/debit cards (Visa, Mastercard, AMEX). Bank transfer and PayPal support coming soon.' },
+  { q: 'Can I change my plan?', a: 'Yes, you can upgrade or downgrade your plan at any time. Changes are applied on a prorated basis.' },
+  { q: 'Do prices include VAT?', a: 'Prices shown do not include VAT. The applicable VAT will be charged based on your country of residence.' },
+  { q: 'How do I access premium content?', a: 'Once subscribed, all premium content is automatically unlocked when you sign in with your account.' },
 ];
 
 const ServicesPage = () => {
@@ -94,16 +94,16 @@ const ServicesPage = () => {
       return;
     }
     toast({
-      title: 'Próximamente',
-      description: 'Pago con tarjeta en desarrollo. Mientras tanto, contacta con info@marotstrategies.com para activar tu suscripción.',
+      title: 'Coming soon',
+      description: 'Coming soon: card payments. In the meantime, contact info@marotstrategies.com to activate your subscription.',
     });
   };
 
   return (
     <>
       <Helmet>
-        <title>Servicios - MAROT STRATEGIES</title>
-        <meta name="description" content="Planes de suscripción de Marot Strategies: Research, Strategies y Total." />
+        <title>Services - MAROT STRATEGIES</title>
+        <meta name="description" content="Marot Strategies subscription plans: Research, Strategies and Total." />
       </Helmet>
       <div className="min-h-screen bg-[#0b0c10] text-white">
         <Header />
@@ -111,13 +111,13 @@ const ServicesPage = () => {
         <main className="pt-32 pb-20 px-4 md:px-8">
           {/* Hero */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16 max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Nuestros servicios</h1>
-            <p className="text-xl text-zinc-400">Herramientas cuantitativas y señales de inversión para tomar decisiones con ventaja.</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Our services</h1>
+            <p className="text-xl text-zinc-400">Quantitative tools and investment signals to make decisions with an edge.</p>
           </motion.div>
 
           {/* Toggle */}
           <div className="flex justify-center items-center gap-4 mb-14">
-            <span className={`text-sm font-medium ${!isAnnual ? 'text-white' : 'text-zinc-500'}`}>Mensual</span>
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-white' : 'text-zinc-500'}`}>Monthly</span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
               className={`relative w-14 h-7 rounded-full transition-colors ${isAnnual ? 'bg-cyan-600' : 'bg-zinc-700'}`}
@@ -125,10 +125,10 @@ const ServicesPage = () => {
             >
               <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full transition-transform ${isAnnual ? 'translate-x-7' : 'translate-x-0.5'}`} />
             </button>
-            <span className={`text-sm font-medium ${isAnnual ? 'text-white' : 'text-zinc-500'}`}>Anual</span>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-white' : 'text-zinc-500'}`}>Annual</span>
             {isAnnual && (
               <span className="text-xs font-bold bg-cyan-900/40 text-cyan-400 px-2.5 py-1 rounded-full border border-cyan-800/50">
-                Ahorra 28%
+                Save 28%
               </span>
             )}
           </div>
@@ -170,10 +170,10 @@ const ServicesPage = () => {
 
                   <div className="mb-6">
                     <span className="text-4xl font-bold">{fmtPrice(price)}</span>
-                    <span className="text-zinc-500 text-sm">/{isAnnual ? 'año' : 'mes'}</span>
+                    <span className="text-zinc-500 text-sm">/{isAnnual ? 'year' : 'month'}</span>
                     {isAnnual && monthlyEquiv && (
                       <p className="text-zinc-500 text-sm mt-1">
-                        ≈ {fmtPrice(monthlyEquiv)}/mes — <span className="text-cyan-400">Ahorra {fmtPrice(plan.annualSavings)}</span>
+                        ≈ {fmtPrice(monthlyEquiv)}/month — <span className="text-cyan-400">Save {fmtPrice(plan.annualSavings)}</span>
                       </p>
                     )}
                   </div>
@@ -202,9 +202,18 @@ const ServicesPage = () => {
             })}
           </div>
 
+          {/* Custom CTA — above FAQ */}
+          <div className="max-w-2xl mx-auto text-center bg-zinc-900/40 border border-zinc-800 rounded-2xl p-10 mb-24">
+            <h2 className="text-2xl font-bold mb-3">Need something custom?</h2>
+            <p className="text-zinc-400 mb-6">We offer tailored solutions for funds, family offices and investment teams.</p>
+            <Button asChild className="bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 px-8">
+              <Link to="/contact">Contact us</Link>
+            </Button>
+          </div>
+
           {/* FAQ */}
           <div className="max-w-3xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-10">Preguntas frecuentes</h2>
+            <h2 className="text-3xl font-bold text-center mb-10">Frequently asked questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => (
                 <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-xl overflow-hidden">
@@ -223,14 +232,6 @@ const ServicesPage = () => {
             </div>
           </div>
 
-          {/* Custom CTA */}
-          <div className="max-w-2xl mx-auto text-center bg-zinc-900/40 border border-zinc-800 rounded-2xl p-10">
-            <h2 className="text-2xl font-bold mb-3">¿Necesitas algo a medida?</h2>
-            <p className="text-zinc-400 mb-6">Ofrecemos soluciones personalizadas para fondos, family offices y equipos de inversión.</p>
-            <Button asChild className="bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 px-8">
-              <Link to="/contact">Contactar</Link>
-            </Button>
-          </div>
         </main>
       </div>
     </>

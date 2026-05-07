@@ -10,12 +10,12 @@ const PaywallScreen = ({ tier }) => (
     <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-zinc-700">
       <Lock className="w-10 h-10 text-zinc-500" />
     </div>
-    <h2 className="text-2xl font-bold text-white mb-3">Contenido exclusivo para suscriptores</h2>
+    <h2 className="text-2xl font-bold text-white mb-3">Subscribers-only content</h2>
     <p className="text-zinc-400 max-w-md mb-6">
-      Indicadores cuantitativos propietarios en tiempo real. Acceso exclusivo para suscriptores.
+      Proprietary quantitative indicators in real time. Exclusive access for subscribers.
     </p>
     <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white px-8">
-      <Link to="/services">Ver planes</Link>
+      <Link to="/services">View plans</Link>
     </Button>
   </div>
 );

@@ -28,17 +28,17 @@ const SignupPage = () => {
 
     if (!error && data?.user) {
       if (data.user.identities?.length === 0) {
-        toast({ variant: 'destructive', title: 'Este email ya está registrado', description: 'Inicia sesión en su lugar.' });
+        toast({ variant: 'destructive', title: 'Email already registered', description: 'Please sign in instead.' });
         return;
       }
-      toast({ title: 'Cuenta creada', description: 'Ya puedes iniciar sesión.' });
+      toast({ title: 'Account created', description: 'You can now sign in.' });
       navigate(intent ? `/login` : '/login');
     }
   };
 
   return (
     <>
-      <Helmet><title>Registrarse - MAROT STRATEGIES</title></Helmet>
+      <Helmet><title>Sign up - MAROT STRATEGIES</title></Helmet>
       <div className="bg-[#0b0c10] min-h-screen flex items-center justify-center px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
           <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 p-8 shadow-2xl">
@@ -47,33 +47,33 @@ const SignupPage = () => {
                 <UserPlus className="w-8 h-8 text-cyan-400" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white text-center mb-2">Crear cuenta</h1>
-            <p className="text-zinc-400 text-center mb-8 text-sm">Únete a Marot Strategies</p>
+            <h1 className="text-2xl font-bold text-white text-center mb-2">Create account</h1>
+            <p className="text-zinc-400 text-center mb-8 text-sm">Join Marot Strategies</p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Nombre completo</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">Full name</label>
                 <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Tu nombre" />
+                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Your name" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">Email</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="tu@email.com" />
+                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="you@email.com" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Contraseña</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">Password</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Mínimo 6 caracteres" />
+                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="At least 6 characters" />
               </div>
               <Button type="submit" disabled={loading} className="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-6 rounded-lg font-bold">
-                {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+                {loading ? 'Creating account...' : 'Create account'}
               </Button>
             </form>
 
             <div className="mt-6 pt-6 border-t border-zinc-800 text-center">
               <Link to="/login" className="text-zinc-500 hover:text-white text-sm transition-colors">
-                ¿Ya tienes cuenta? <span className="text-cyan-400">Inicia sesión</span>
+                Already have an account? <span className="text-cyan-400">Sign in</span>
               </Link>
             </div>
           </div>

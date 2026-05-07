@@ -99,7 +99,7 @@ const Header = () => {
                 <DropdownMenuContent className="bg-gray-900 border-gray-800 text-white w-48">
                   <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
                     <Link to="/account" className="w-full flex items-center gap-2">
-                      <UserCircle className="w-4 h-4" /> Mi cuenta
+                      <UserCircle className="w-4 h-4" /> My account
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -111,17 +111,17 @@ const Header = () => {
                   )}
                   <DropdownMenuSeparator className="bg-gray-800" />
                   <DropdownMenuItem onClick={() => signOut()} className="focus:bg-gray-800 focus:text-white cursor-pointer flex items-center gap-2 text-red-400">
-                    <LogOut className="w-4 h-4" /> Cerrar sesión
+                    <LogOut className="w-4 h-4" /> Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-3">
                 <Link to="/login" className="text-sm text-zinc-300 hover:text-white transition-colors">
-                  Iniciar sesión
+                  Sign in
                 </Link>
                 <Link to="/signup" className="text-sm bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg transition-colors font-medium">
-                  Registrarse
+                  Sign up
                 </Link>
               </div>
             )}

@@ -104,20 +104,20 @@ const ResearchPage = () => {
             {user && hasActiveSubscription('research') ? (
               <div className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-12 text-center">
                 <Terminal className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold text-white mb-4">Terminal cuantitativo</h2>
-                <p className="text-zinc-400 text-lg">Próximamente: indicadores propietarios en tiempo real</p>
+                <h2 className="text-3xl font-bold text-white mb-4">Quantitative terminal</h2>
+                <p className="text-zinc-400 text-lg">Coming soon: proprietary indicators in real time</p>
               </div>
             ) : (
               <div className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-12 text-center">
                 <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-zinc-700">
                   <Lock className="w-10 h-10 text-zinc-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-3">Contenido exclusivo para suscriptores</h2>
+                <h2 className="text-2xl font-bold text-white mb-3">Subscribers-only content</h2>
                 <p className="text-zinc-400 max-w-md mx-auto mb-6">
-                  Indicadores cuantitativos propietarios en tiempo real. Acceso exclusivo para suscriptores de Marot Research o Marot Total.
+                  Proprietary quantitative indicators in real time. Exclusive access for Marot Research or Marot Total subscribers.
                 </p>
                 <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white px-8">
-                  <Link to="/services">Ver planes</Link>
+                  <Link to="/services">View plans</Link>
                 </Button>
               </div>
             )}
