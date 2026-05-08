@@ -1,7 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Calculator, Grid3X3, FileText } from 'lucide-react';
+import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Calculator, Grid3X3, FileText, PieChart, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -22,6 +25,7 @@ import MetricsTable from '@/components/quant/MetricsTable';
 import InvestmentCalculator from '@/components/quant/InvestmentCalculator';
 import CorrelationHeatmap from '@/components/quant/CorrelationHeatmap';
 import StrategySummary from '@/components/quant/StrategySummary';
+import PortfolioBuilder from '@/components/quant/PortfolioBuilder';
 import {
   Tooltip,
   TooltipContent,
@@ -40,6 +44,8 @@ const DATE_PRESETS = [
 const QuantStrategiesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [computing, setComputing] = useState(true);
+  const { hasActiveSubscription } = useAuth();
+  const canAccessPortfolioBuilder = hasActiveSubscription('research');
 
   // Parse URL state once on mount
   const initRef = useRef({
@@ -48,7 +54,10 @@ const QuantStrategiesPage = () => {
     log: searchParams.get('log') === '1',
     rebased: searchParams.get('r') !== '0',
     preset: searchParams.get('p') || 'MAX',
+    tab: searchParams.get('tab') || 'summary',
   });
+
+  const [activeTab, setActiveTab] = useState(initRef.current.tab);
 
   const [selectedItems, setSelectedItems] = useState(initRef.current.selected);
   const [primaryBenchmark, setPrimaryBenchmark] = useState(initRef.current.benchmark);
@@ -64,15 +73,17 @@ const QuantStrategiesPage = () => {
 
   // Sync state to URL without causing re-renders (use window.history directly)
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (selectedItems.length) params.set('s', selectedItems.join(','));
-    if (primaryBenchmark) params.set('b', primaryBenchmark);
-    if (isLog) params.set('log', '1');
-    if (!isRebased) params.set('r', '0');
-    if (activePreset !== 'MAX') params.set('p', activePreset);
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    const params = new URLSearchParams(window.location.search);
+    if (selectedItems.length) params.set('s', selectedItems.join(',')); else params.delete('s');
+    if (primaryBenchmark) params.set('b', primaryBenchmark); else params.delete('b');
+    if (isLog) params.set('log', '1'); else params.delete('log');
+    if (!isRebased) params.set('r', '0'); else params.delete('r');
+    if (activePreset !== 'MAX') params.set('p', activePreset); else params.delete('p');
+    if (activeTab && activeTab !== 'summary') params.set('tab', activeTab); else params.delete('tab');
+    const qs = params.toString();
+    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
     window.history.replaceState(null, '', newUrl);
-  }, [selectedItems, primaryBenchmark, isLog, isRebased, activePreset]);
+  }, [selectedItems, primaryBenchmark, isLog, isRebased, activePreset, activeTab]);
 
   // Normalize all data once
   const normalizedData = useMemo(() => {
@@ -250,7 +261,7 @@ const QuantStrategiesPage = () => {
                     <Skeleton className="h-[350px] bg-zinc-800/30 rounded-lg" />
                   </div>
                 ) : (
-                  <Tabs defaultValue="summary" className="space-y-6">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="bg-[#141416] border border-zinc-800 p-1 h-auto flex flex-wrap gap-1" data-testid="chart-tabs">
                       <TabsTrigger value="summary" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
                         <FileText className="w-3.5 h-3.5" /> Summary
@@ -275,6 +286,10 @@ const QuantStrategiesPage = () => {
                       </TabsTrigger>
                       <TabsTrigger value="correlation" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
                         <Grid3X3 className="w-3.5 h-3.5" /> Correlation
+                      </TabsTrigger>
+                      <TabsTrigger value="portfolio-builder" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5" data-testid="portfolio-builder-tab">
+                        <PieChart className="w-3.5 h-3.5" /> Portfolio Builder
+                        {!canAccessPortfolioBuilder && <Lock className="w-3 h-3 ml-0.5 text-amber-500/80" />}
                       </TabsTrigger>
                     </TabsList>
 
@@ -302,6 +317,24 @@ const QuantStrategiesPage = () => {
                       </TabsContent>
                       <TabsContent value="correlation" className="mt-0">
                         <CorrelationHeatmap selectedItems={selectedItems} registry={registry} normalizedData={normalizedData} dateRange={dateRange} />
+                      </TabsContent>
+                      <TabsContent value="portfolio-builder" className="mt-0" data-testid="portfolio-builder-content">
+                        {canAccessPortfolioBuilder ? (
+                          <PortfolioBuilder normalizedData={normalizedData} />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-16 px-4 text-center" data-testid="portfolio-builder-paywall">
+                            <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-zinc-700">
+                              <Lock className="w-10 h-10 text-zinc-500" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-white mb-3">Portfolio Builder is a premium feature</h2>
+                            <p className="text-zinc-400 max-w-md mb-6">
+                              Construct custom multi-strategy portfolios with rebalancing and full backtest analytics. Available on the Research and Total plans.
+                            </p>
+                            <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white px-8" data-testid="portfolio-builder-paywall-cta">
+                              <Link to="/services">View plans</Link>
+                            </Button>
+                          </div>
+                        )}
                       </TabsContent>
                     </div>
                   </Tabs>

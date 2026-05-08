@@ -7,6 +7,7 @@
 - 4 benchmarks: S&P 500, Nasdaq 100, Gold, Equity & Gold 50/50
 - Charts: Equity Curve, Drawdown, Rolling Sharpe, Risk/Return, Histogram, Correlation Heatmap
 - Investment Calculator: Accumulation, Withdrawal, Mixed modes with XIRR
+- Portfolio Builder (2026-05-08): mix up to 10 components with custom weights, rebalancing (monthly/quarterly/annually/never), allocation donut, equity curve, drawdown, full metrics table per-component vs portfolio. Paywalled for `research`/`total` tiers. Deep-link via `?tab=portfolio-builder`.
 - Metrics Table always visible below charts
 - Watermark "MAROT STRATEGIES" on all charts
 
