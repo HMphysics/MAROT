@@ -277,6 +277,7 @@ const AdminPostEditorPage = () => {
                                 >
                                     <option value="Market Analysis">Market Analysis</option>
                                     <option value="White Papers">White Papers</option>
+                                    <option value="Educational Primers">Educational Primers</option>
                                     <option value="Case Studies">Case Studies</option>
                                     <option value="Strategy Updates">Strategy Updates</option>
                                 </select>

@@ -77,6 +77,9 @@ const Header = () => {
                   <Link to="/research?category=Market Analysis" className="w-full">Market Analysis</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
+                  <Link to="/research?category=Educational Primers" className="w-full">Educational Primers</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="focus:bg-gray-800 focus:text-white cursor-pointer">
                   <Link to="/research?category=Terminal" className="w-full">Terminal</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

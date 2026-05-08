@@ -48,7 +48,7 @@ const AboutUsPage = () => {
     <>
       <Helmet>
         <title>About Us - MAROT STRATEGIES</title>
-        <meta name="description" content="Learn about Marot Strategies, our mission, and our approach to financial research and asset management." />
+        <meta name="description" content="Learn about Marot Strategies, our mission, and our approach to financial research." />
         <meta property="og:title" content="About Us - MAROT STRATEGIES" />
         <meta property="og:description" content="Strategic Vision. Informed Decisions. Sustainable Growth." />
         <meta property="og:url" content="https://marotstrategies.com/about-us" />
@@ -62,7 +62,7 @@ const AboutUsPage = () => {
               <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight">About Marot Strategies</h1>
               <p className="mt-4 text-lg md:text-xl text-gray-400">Strategic Vision. Informed Decisions. Sustainable Growth.</p>
               <p className="mt-8 max-w-3xl mx-auto text-base md:text-lg">
-                We are a financial research and asset management firm dedicated to delivering comprehensive and innovative investment solutions. Our expertise spans across trend research, macro-strategic positioning, uncorrelated investment strategies, advanced trading systems, options strategies, and growth stock analysis. We provide the insights and strategies that empower our clients to navigate complex markets and achieve sustainable success.
+                We are a financial research firm dedicated to delivering comprehensive and innovative investment solutions. Our expertise spans across trend research, macro-strategic positioning, uncorrelated investment strategies, advanced trading systems, options strategies, and growth stock analysis. We provide the insights and strategies that empower our clients to navigate complex markets and achieve sustainable success.
               </p>
             </Section>
 

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/customSupabaseClient';
-import { ArrowRight, FileText, BarChart, BookOpen, Clock, Lock, Terminal } from 'lucide-react';
+import { ArrowRight, FileText, BarChart, BookOpen, Clock, Lock, Terminal, GraduationCap } from 'lucide-react';
 import Header from '@/components/Header';
 import NewsletterForm from '@/components/NewsletterForm';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
@@ -13,6 +13,7 @@ const categories = [
   { id: 'all', label: 'All Research' },
   { id: 'White Papers', label: 'White Papers' },
   { id: 'Market Analysis', label: 'Market Analysis' },
+  { id: 'Educational Primers', label: 'Educational Primers' },
   { id: 'Terminal', label: 'Terminal' },
 ];
 
@@ -130,6 +131,12 @@ const ResearchPage = () => {
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-96 bg-gray-900 rounded-xl" />
             ))}
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center mb-20">
+            <GraduationCap className="w-16 h-16 text-zinc-700 mb-4" />
+            <p className="text-zinc-400 text-lg">No articles in this category yet.</p>
+            <p className="text-zinc-600 text-sm mt-1">Check back soon.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">

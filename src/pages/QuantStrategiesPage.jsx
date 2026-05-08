@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Calculator, Grid3X3, FileText, Lock } from 'lucide-react';
+import { BarChart3, LineChart, TrendingDown, ScatterChart as ScatterIcon, BarChart, Calculator, Grid3X3, FileText } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -22,9 +22,6 @@ import MetricsTable from '@/components/quant/MetricsTable';
 import InvestmentCalculator from '@/components/quant/InvestmentCalculator';
 import CorrelationHeatmap from '@/components/quant/CorrelationHeatmap';
 import StrategySummary from '@/components/quant/StrategySummary';
-import { useAuth } from '@/contexts/SupabaseAuthContext';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
@@ -40,38 +37,9 @@ const DATE_PRESETS = [
   { label: 'MAX', getValue: () => null },
 ];
 
-// Calculator Paywall
-const CalculatorPaywall = ({ isLoggedIn }) => (
-  <div className="flex flex-col items-center justify-center py-16 px-4 text-center" data-testid="calculator-paywall">
-    <div className="w-20 h-20 bg-cyan-900/20 rounded-full flex items-center justify-center mb-6 border border-cyan-800/40">
-      <Lock className="w-10 h-10 text-cyan-500" />
-    </div>
-    <h2 className="text-2xl font-bold text-white mb-3">Calculator locked</h2>
-    <p className="text-zinc-400 max-w-lg mb-6">
-      Simulate any investment scenario across our strategies and benchmarks. See exactly how a hypothetical portfolio would have performed with contributions, withdrawals, or both.
-    </p>
-    <ul className="text-sm text-zinc-400 text-left max-w-md space-y-2 mb-8">
-      <li className="flex items-start gap-2"><span className="text-cyan-400 mt-0.5">&#8226;</span>Run any "what if" scenario across multiple strategies</li>
-      <li className="flex items-start gap-2"><span className="text-cyan-400 mt-0.5">&#8226;</span>Add periodic contributions or simulate retirement withdrawals</li>
-      <li className="flex items-start gap-2"><span className="text-cyan-400 mt-0.5">&#8226;</span>Compare money-weighted returns (XIRR) side by side</li>
-      <li className="flex items-start gap-2"><span className="text-cyan-400 mt-0.5">&#8226;</span>Export results to share or analyze</li>
-    </ul>
-    <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white px-10 py-5 text-base font-bold">
-      <Link to="/services">View plans</Link>
-    </Button>
-    {!isLoggedIn && (
-      <p className="text-zinc-600 text-sm mt-4">
-        Already subscribed? <Link to="/login" className="text-cyan-500 hover:text-cyan-400 underline">Sign in.</Link>
-      </p>
-    )}
-  </div>
-);
-
 const QuantStrategiesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [computing, setComputing] = useState(true);
-  const { user, hasActiveSubscription } = useAuth();
-  const hasCalcAccess = user && hasActiveSubscription('research');
 
   // Parse URL state once on mount
   const initRef = useRef({
@@ -303,7 +271,7 @@ const QuantStrategiesPage = () => {
                         <BarChart className="w-3.5 h-3.5" /> Histogram
                       </TabsTrigger>
                       <TabsTrigger value="calculator" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
-                        <Calculator className="w-3.5 h-3.5" /> Calculator {!hasCalcAccess && <Lock className="w-3 h-3 ml-0.5 text-zinc-600" />}
+                        <Calculator className="w-3.5 h-3.5" /> Calculator
                       </TabsTrigger>
                       <TabsTrigger value="correlation" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white text-zinc-500 text-xs gap-1.5 px-3 py-1.5">
                         <Grid3X3 className="w-3.5 h-3.5" /> Correlation
@@ -330,11 +298,7 @@ const QuantStrategiesPage = () => {
                         <MonthlyHistogram selectedItems={selectedItems} registry={registry} normalizedData={normalizedData} dateRange={dateRange} />
                       </TabsContent>
                       <TabsContent value="calculator" className="mt-0">
-                        {hasCalcAccess ? (
-                          <InvestmentCalculator pageSelectedItems={selectedItems} normalizedData={normalizedData} />
-                        ) : (
-                          <CalculatorPaywall isLoggedIn={!!user} />
-                        )}
+                        <InvestmentCalculator pageSelectedItems={selectedItems} normalizedData={normalizedData} />
                       </TabsContent>
                       <TabsContent value="correlation" className="mt-0">
                         <CorrelationHeatmap selectedItems={selectedItems} registry={registry} normalizedData={normalizedData} dateRange={dateRange} />
